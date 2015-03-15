@@ -1,0 +1,41 @@
+<html>
+    <head>
+    <style>
+    	h1 {
+    	text-align: center;
+	}
+
+ 	h2 {
+    	text-align: center;
+	}
+
+	h3 {
+    	text-align: center;
+	} 
+    </style>
+        <title>My Logged-in Page</title>
+    </head>
+<body>
+
+<form action="/welcome" method="GET">
+<input type="submit" value = "Logout" style="float: right;"/>
+</form>
+
+<form action="/profile" method="GET">
+<input type="submit" value = "Profile" style="float: left;"/>      
+</form>
+
+
+
+<h1>My User Page</h1>
+<br><br>
+<form action="/tweets" method="POST">
+<center><input type="text" name="tweet" value="Enter a Tweet" maxlength="140" size = "81"/></center>
+<center><input type="submit" value="Post Tweet" /></center>
+</form> 
+<br>
+<h3>MY TWEETS WILL APPEAR HERE</h3>
+
+
+</body>
+</html>
