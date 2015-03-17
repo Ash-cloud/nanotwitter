@@ -47,7 +47,7 @@ Followed number<br>
 <div id="section">
 <h2>Tweet area</h2>
 <p>
-<form action="/api/v1/tweet" method="POST"> <!--Update the tweets through methods in /tweet-->
+<form action="/api/v1/tweet" method="PUT"> <!--Update the tweets through methods in /tweet-->
 	<textarea name="tweet_content" cols=80 rows=5/>
 		Post a tweet here
 	</textarea>

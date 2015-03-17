@@ -11,7 +11,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 3) do
+ActiveRecord::Schema.define(version: 4) do
+
+  create_table "follows", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "follower"
+  end
 
   create_table "tweet_users", force: :cascade do |t|
     t.integer "user_id"
@@ -23,7 +28,6 @@ ActiveRecord::Schema.define(version: 3) do
 
   create_table "tweets", force: :cascade do |t|
     t.string   "text"
-    t.integer  "tweet_id"
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -33,7 +37,6 @@ ActiveRecord::Schema.define(version: 3) do
     t.string   "password"
     t.string   "user_name"
     t.string   "email"
-    t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -1,0 +1,8 @@
+class Follow < ActiveRecord::Base
+    validates_uniqueness_of :followee, :scope => :follower
+    belongs_to :users
+  
+    def to_json
+        super()
+    end
+end
