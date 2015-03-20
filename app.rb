@@ -1,40 +1,105 @@
 require 'sinatra'
 require './app'
 require 'sinatra/activerecord'
-require './models/tweet'
-require './models/user'
-require './models/tweet_user'
-require './models/followee'
+require_relative 'server'
+
 enable :sessions
 get '/' do
 	erb :welcome
 end
 
 
+#this router show erbs depending on the status of current user. It require parameters :user_id to render the view for userpage.
+#if user is logged in and user_id in sessoin is equal to parameter, then show mypage(visiting his/her own page)
+#if user is logged in while user_id in session are different from what in parameter, show loggedin usrepage (visiting other people's page)
+#if user is unlogged in then the page shows will be slightly different from the second situation(no follow and unfollow, login/register button)
+get '/user_page' do
+	@page_owner_id=params[:user_id]
+	if @page_owner_id.to_s==session[:user_id].to_s #logged in and is the owner, show mypage.erb
+		redirect '/mypage'
+	elsif session[:log_status] #logged in while not the owner, will have follow and unfollow button
+		redirect '/show_userpage?owner_id='+@page_owner_id.to_s
+	end
+end
+
+
+get '/mypage' do
+	@tweets=Service.get_stream(session[:user_id])
+	erb :mypage
+end
 get '/loggedin_root' do
+	@tweets=Service.timeline(session[:user_id])
 	erb :loggedin_root
 end
 
-get '/tweet' do
+get '/show_userpage' do
+	puts 'in show user page'
+	@user_id=session[:user_id]
+	@owner_id=params[:owner_id]
+	@tweets=Service.get_stream(params[:owner_id])
+	@owner_name=User.find_by(id:params[:owner_id]).user_name
+	@log_status=session[:log_status]
+	@not_followed=true
+	erb :show_userpage
 end
+
+
+get '/profile' do
+    users_followed = Service.followers(session[:user_id])
+    users_followed.each do |followee|
+        puts "follows #{followee.user_id}"
+    end 
+    user_name = session[:user_name]
+    email = Service.get_email_by_id(session[:user_id])
+	erb :profile, :locals => {'user_name' => user_name, 'users_followed' => users_followed, 'email' => email}
+end
+
 
 get '/login' do
-	erb :login
-	
+	if session[:log_status]==true
+		redirect '/loggedin_root'
+	else
+		erb :login
+	end
 end
+get '/logout' do
 
+	session[:user_name]=nil
+	session[:user_id]=nil
+	session[:log_status]=false
+	redirect '/'
+end
 get '/register' do
 	erb :register
+	
 end
+get '/redirect_login' do
+	@user_name=params[:user_name]
+	@password=params[:password]
+	response=Service.login(@user_name,@password)
+	if response=='logged_in'
+	       	session[:user_name]=@user_name
+		session[:user_id]=User.find_by(user_name: @user_name).id
+		session[:log_status]=true
+		redirect '/loggedin_root'
+	else
+		redirect '/login'
+	end
 
-get '/user/jf' do
-	erb :loggedin_userpage
+end
+get '/redirect_register' do
+    message = Service.register(params[:user_name],params[:password],params[:email])
+	if message == 'ok'
+	    redirect '/login'
+	else
+	    redirect '/register'
+	end
 end
 
 #retrieves a tweet given a tweet id 
 get '/api/v1/tweet' do
-
-	tweet = Tweet.find_by_id(params[:id])
+    #tweet = Tweet.find_by_id(params[:id])
+    tweet = Service.getTweetsByID(params[:id])
 	
 	if tweet
 		tweet.to_json
@@ -45,8 +110,8 @@ get '/api/v1/tweet' do
 end
 #retrieves a user given a user id
 get '/api/v1/user' do
-
-	user = User.find_by_id(params[:id])
+    #user = User.find_by_id(params[:id])
+    user = Service.getUserByID(params[:id])
 	
 	if user
 		user.to_json
@@ -59,12 +124,14 @@ end
 get '/api/v1/tweet/recent/' do
 	
 	@number= params[:number]
-	tweets = Tweet.all.order(created_at: "DESC").take(@number)
+    #tweets = Tweet.all.order(created_at: "DESC").take(@number)
 	if not @number 
 		@number=30
 	end
 	puts @number
-
+    
+    tweets = Service.all.order(created_at: "DESC").take(@number)
+    
 	if tweets 
 		tweets.to_json
 	else
@@ -127,43 +194,37 @@ get '/api/v1/user/*/modify' do
 end 
 
 #follow the user_id that is given (will be a post)
-get 'api/v1/user/follow' do
-    @follower = params[:user_name]
-    @user_id = sessions[:user_id]
-    follower = User.find_by_id(@user_id)
-    if !follower
+get '/api/v1/user/follow' do
+    follower_id = session[:user_id]
+    followee_id = params[:user_id]
+    followee= User.find_by(id:followee_id)
+    if !followee
         error 404, {:error => "User not found"}.to_json
     else
-        follow = Follow.create(user_id:@user_id,follower:@follower)
+        follow = Follow.create(user_id:followee_id,follower:follower_id)
         follow.to_json
     end
 
 end       
+#unfollow the user_id that is given
+get '/api/v1/user/unfollow' do
+    follower_id = session[:user_id]
+    followee_id = params[:user_id]
+    followee = User.find_by(id:followee_id)
+    if !followee
+        error 404, {:error => "User not found"}.to_json
+    else
+        f = Follow.where(user_id:followee_id,follower:follower_id)
+        Follow.delete(f)
+        #not sure what this should return in terms of JSON
+    end
+    
+end     
 get '/api/v1/user/login' do
-	puts 'in login'
-	@username=params[:username]
-	@pass=params[:password]
-	@user=User.find_by(user_name: @username)
-	if @user #if that user exist, check the password
-		if @user.password==@pass
-			session[:user_name]=@username
-			session[:user_id]=@user.id
-			session[:log_status]=true
-			#puts session[:user_name],session[:user_id],session[:log_status]
-			status 200
-		else
-			error 403, user.errors.to_json
-		end
-	else
-		error 403, user.errors.to_json
-	end
+
 end
-get '/api/v1/user/logout' do
-	session[:user_name]=nil
-	session[:user_id]=nil
-	session[:log_status]=false
-	puts session[:user_name],session[:log_status]
-end
+
+
 post '/api/v1/user/register' do
 	begin
 		@email=params[:email]
@@ -196,10 +257,41 @@ post '/api/v1/tweet' do
 
 			TweetUser.create(user_id: follower[:follower], tweet_id: @tweet_id)	
 		end
-
+		
+		status 200
 	rescue => e
 		error 400, e.message.to_json
 	end
-	redirect '/loggedin_root'
+	
 	
 end
+
+post '/tweet' do
+
+	@text=params[:tweet_content]
+	@user_id=session[:user_id]
+	@sent_from=params[:path]
+
+	tweet = Service.post_tweet(@text,@user_id)
+
+	@tweet_id= tweet[:id]
+
+	Service.post_tweet_user(@user_id,@tweet_id)
+
+	followers = Service.get_followers(@user_id)
+
+	followers.each do |follower|
+
+		Service.post_tweet_user(follower[:follower],@tweet_id)	
+	end
+
+	if @sent_from == '/loggedin_root'
+		redirect '/loggedin_root'
+	elsif @sent_from == '/mypage'
+		redirect '/mypage'
+	end
+	
+
+end
+
+

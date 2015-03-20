@@ -1,0 +1,25 @@
+<html>
+    <head>
+        <title>nanoTwitter</title>
+    </head>
+<body>
+
+<h1>Welcome to NanoTwitter!</h1>
+<form action="/login" method="GET">
+<p>To use NanoTwitter, login or register for a new account</p>
+<p>Login:</p>
+<input type="submit">
+<!--<button name = "button" type "button">
+    <strong>Login</strong>
+    </button>-->
+</form>
+<p>Register:</p
+<form action="/register" method="GET">
+<!--<button name = "button" type "button">
+    <strong>Register</strong>
+    </button>-->
+<input type="submit">   
+    <p>TWEETS WILL APPEAR DOWN HERE</p>
+</form>
+</body>
+</html>

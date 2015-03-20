@@ -37,9 +37,19 @@
 <h1>Logged in Root Page</h1>
 </div>
 
+<form action='/logout' method="GET">
+<input type="submit" value = "Logout" style="float: right;"/>
+</form>
+<form action="/mypage" method="GET">
+<input type="submit" value = "mypage" style="float: right;"/>      
+</form>
+
 <div id="nav">
 Picture<br>
-Profile<br>
+<form action = "/profile" method="GET">
+<input type="submit" value = "Profile" style="float: blue;"/>
+</form>
+<br>
 Follower number<br>
 Followed number<br>
 </div>
@@ -47,19 +57,25 @@ Followed number<br>
 <div id="section">
 <h2>Tweet area</h2>
 <p>
-<form action="/api/v1/tweet" method="PUT"> <!--Update the tweets through methods in /tweet-->
+<form action="/tweet" method="POST"> <!--Update the tweets through methods in /tweet-->
 	<textarea name="tweet_content" cols=80 rows=5/>
 		Post a tweet here
 	</textarea>
 	<br/>
 	<br/>
-	<input type="submit" value="Send" style="width:100px"/>
+	<input type="submit" value="Post Tweet" style="width:100px"/>
+	<input type="hidden" name="path" value="/loggedin_root">
 </form>
 </p>
-<% (1...10).each do |num| %>
-	<%= 'twitter:'%>
-	<%= num%>
-	<a href="/">userpage</a>	
+<% @tweets.each do |tweet| %>
+ 	<% @user_id= tweet.user_id %>
+ 	<% user = User.find_by(id: @user_id)%>
+ 	<% user_name = user.user_name%>
+	<p><a href="/user_page?user_id=<%= @user_id %>"> <%= user_name %> </a>
+	<% @diff = Time.now - tweet.created_at %>
+ 
+	<%= tweet.created_at %></p>
+	<%= tweet.text%>	
 	<br/>
 <% end %>
 
