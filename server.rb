@@ -26,17 +26,17 @@ class Service
 			return 'user not found'
 		end
 	end
-    def self.followers(user_id)
-        users_followed = Follow.where(follower: user_id)
-        if users_followed
-            return users_followed
-        else
-            return nil
-        end
-    end
-    def self.get_email_by_id(user_id)
-	    @user = User.find_by(id: user_id)
-	    email = @user.email
+	def self.followers(user_id)
+		users_followed = Follow.where(follower: user_id)
+		if users_followed
+			return users_followed
+		else
+			return nil
+		end
+	end
+	def self.get_email_by_id(user_id)
+		@user = User.find_by(id: user_id)
+		email = @user.email
 	end
 
 	def self.register(user_name,password,email)
@@ -52,39 +52,39 @@ class Service
 		end
 	end
 
-    def self.getTweetsByID(tweet_id)
-        tweet = Tweet.find_by(tweet_id: tweet_id)
-        if tweet
-            return tweet
-        else
-            return nil
-        end
-    end
+	def self.getTweetsByID(tweet_id)
+		tweet = Tweet.find_by(tweet_id: tweet_id)
+		if tweet
+			return tweet
+		else
+			return nil
+		end
+	end
 
-    def self.getUserByID(user_id)
-        user = User.find_by(id: user_id)
-        if user
-            return user
-        else
-            return nil
-        end
-    end
+	def self.getUserByID(user_id)
+		user = User.find_by(id: user_id)
+		if user
+			return user
+		else
+			return nil
+		end
+	end
 
-    def self.getRecentTweets(number)
-        tweets = Tweet.all.order(created_at: "DESC").take(number)
-        if tweets
-            return tweets
-        else
-            return nil
-        end
-    end
+	def self.getRecentTweets()
+		tweets = Tweet.all.order(created_at: "DESC").take(100)
+		if tweets
+			return tweets
+		else
+			return nil
+		end
+	end
 
 	def self.post_tweet(tweet_content,user_id)
 
 		@tweet = Tweet.create(text: tweet_content,user_id: user_id)
 
 		return @tweet
-			
+
 	end
 
 	def self.post_tweet_user(user_id,tweet_id)
@@ -94,27 +94,35 @@ class Service
 		return @tweet_user
 
 	end	
-	
-	def self.follow(follower_id, followee_id)
-        Follow.create(user_id: followee_id, follower_id: follower_id)
-    end
-    
-    def self.unfollow(follower_id, followee_id)
-        follow = Follow.where(user_id: followee_id, follower: follower_id)
-        Follow.delete(f)
-    end
 
+	def self.follow(follower_id, followee_id)
+		Follow.create(user_id: followee_id, follower: follower_id)
+	end
+
+	def self.unfollow(follower_id, followee_id)
+		follow = Follow.where(user_id: followee_id, follower: follower_id)
+		Follow.delete(follow)
+	end
 	def self.get_followers(user_id)
 
 		@followers = Follow.where(user_id: user_id)
 
 		return @followers
+	end
 
+	def self.followed?(followee_id,follower_id)
+		puts 'followee',followee_id,'follower',follower_id
+		followed_record=Follow.where(user_id:followee_id).find_by(follower: follower_id)
+		if followed_record
+			return true
+		else
+			return false
+		end
 	end
 
 	def self.get_stream(user_id)
-		 tweets = Tweet.where(user_id:user_id).order(created_at: "DESC").take(100)
-		 return tweets
+		tweets = Tweet.where(user_id:user_id).order(created_at: "DESC").take(100)
+		return tweets
 	end
 
 end

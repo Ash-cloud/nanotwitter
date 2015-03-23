@@ -20,7 +20,8 @@ class Service
 	def self.timeline(user_id)
 		@user=User.find_by(id: user_id)
 		if @user
-			return @user.tweets
+			return @user.tweets.order(created_at: "DESC")
+
 		else
 			return 'user not found'
 		end
@@ -70,7 +71,7 @@ class Service
     end
 
     def self.getRecentTweets(number)
-        tweets = Tweet.all.order(created_at: "DESC").take(number)
+        tweets = Tweet.all.order(created_at: "DESC").take(100)
         if tweets
             return tweets
         else

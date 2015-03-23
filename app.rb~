@@ -3,32 +3,43 @@ require './app'
 require 'sinatra/activerecord'
 require_relative 'server'
 
+
 enable :sessions
 get '/' do
+	@tweets = Service.getRecentTweets()
 	erb :welcome
 end
 
+#setting up the environment for testing
+env_index = ARGV.index("-e")
+env_arg = ARGV[env_index + 1] if env_index
+env = env_arg || ENV["SINATRA_ENV"] || "development"
+databases = YAML.load_file("config/database.yml")
+puts "########"+databases[env].to_s
+ActiveRecord::Base.establish_connection(databases[env])
+#if environment is test then delete everything in the test database
+#so the tests will run anew
+if env == "test"
+    puts "starting in test mode" 
+    User.delete_all 
+    Follow.delete_all
+    Tweet.delete_all
+    TweetUser.delete_all 
+end
 
 #this router show erbs depending on the status of current user. It require parameters :user_id to render the view for userpage.
-#if user is logged in and user_id in sessoin is equal to parameter, then show mypage(visiting his/her own page)
+#if user is logged in and user_id in session is equal to parameter, then show mypage(visiting his/her own page)
 #if user is logged in while user_id in session are different from what in parameter, show loggedin usrepage (visiting other people's page)
 #if user is unlogged in then the page shows will be slightly different from the second situation(no follow and unfollow, login/register button)
 get '/user_page' do
-	@page_owner_id=params[:user_id]
+	@page_owner_id=session[:owner_id]
 	if @page_owner_id.to_s==session[:user_id].to_s #logged in and is the owner, show mypage.erb
 		redirect '/mypage'
 	elsif session[:log_status] #logged in while not the owner, will have follow and unfollow button
-		#owner id is passed as @page_owner_id
-		#erb :loggedin_root
-		redirect '/loggedin_userpage'
-	else
-		redirect '/unlogin_userpage'
+		redirect '/show_userpage?owner_id='+@page_owner_id.to_s
 	end
 end
 
-get '/loggedin_userpage' do
-	erb :loggedin_userpage
-end
 
 get '/mypage' do
 	@tweets=Service.get_stream(session[:user_id])
@@ -38,9 +49,18 @@ get '/loggedin_root' do
 	@tweets=Service.timeline(session[:user_id])
 	erb :loggedin_root
 end
-get '/unlogin_userpage' do
-	erb :unlogin_userpage #unlogged in perspactive
+
+get '/show_userpage' do
+	puts 'in show user page'
+	@user_id=session[:user_id]
+	@owner_id=params[:owner_id]
+	@tweets=Service.get_stream(params[:owner_id])
+	@owner_name=User.find_by(id:params[:owner_id]).user_name
+	@log_status=session[:log_status]
+	@followed_flag=Service.followed?(@owner_id,@user_id)
+	erb :show_userpage
 end
+
 
 get '/profile' do
     users_followed = Service.followers(session[:user_id])
@@ -60,6 +80,7 @@ get '/login' do
 		erb :login
 	end
 end
+
 get '/logout' do
 
 	session[:user_name]=nil
@@ -69,7 +90,19 @@ get '/logout' do
 end
 get '/register' do
 	erb :register
-	
+end
+post '/follow' do
+	@followee_id=params[:followee_id]
+	@follower_id=params[:follower_id]
+	Service.follow(@follower_id,@followee_id)
+	redirect back
+end
+post '/unfollow' do
+	@followee_id=params[:followee_id]
+	@follower_id=params[:follower_id]
+	Service.unfollow(@follower_id,@followee_id)
+	redirect back
+
 end
 get '/redirect_login' do
 	@user_name=params[:user_name]

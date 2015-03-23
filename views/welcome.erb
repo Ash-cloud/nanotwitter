@@ -1,12 +1,43 @@
 <html>
-    <head>
-        <title>nanoTwitter</title>
-    </head>
+<head>
+<style>
+#header {
+    background-color:black;
+    color:white;
+    text-align:center;
+    padding:5px;
+}
+#nav {
+    line-height:30px;
+    background-color:#eeeeee;
+    height:300px;
+    width:100px;
+    float:left;
+    padding:5px;	      
+}
+#section {
+    width:350px;
+    float:left;
+    padding:10px;	 	 
+}
+#footer {
+    background-color:black;
+    color:white;
+    clear:both;
+    text-align:center;
+   padding:5px;	 	 
+}
+</style>
+</head>
 <body>
 
+<div id="header">
 <h1>Welcome to NanoTwitter!</h1>
+</div>
+
+
 <form action="/login" method="GET">
-<p>To use NanoTwitter, login or register for a new account</p>
+<p><center>To use NanoTwitter, login or register for a new account</center></p>
 <p>Login:</p>
 <input type="submit" value="Go To Login">
 </form>
@@ -15,8 +46,28 @@
 <!--<button name = "button" type "button">
     <strong>Register</strong>
     </button>-->
-<input type="submit" value="Go To Register">   
-    <p>TWEETS WILL APPEAR DOWN HERE</p>
+<input type="submit" value="Go To Register"> 
+
 </form>
+
+<center><b>Most Recent Tweets</b></center>
+<% @tweets.each do |tweet| %>
+	<% @user_id= tweet.user_id %>
+ 	<% user = User.find_by(id: @user_id)%>
+ 	<% user_name = user.user_name%>
+	<p><center><a href="/user_page?user_id=<%= @user_id %>"> <%= user_name %> </a>
+	<% diff = (Time.now - tweet.created_at).to_i %>
+ 		<% if diff < 60 %>	
+			<%= diff %>s ago </center></p>
+		<% elsif diff >= 60 && diff < 3600 %>
+			<%= (diff / 60).to_i %>m ago</center></p>
+		<% elsif diff >= 3600 && diff < 86400 %>
+			<%= (diff / 3600).to_i %>h ago</center></p>
+		<% else  %>
+			<%= (diff / 86400).to_i %>d ago</center></p>
+		<% end %>
+	<center><%= tweet.text%></center>
+	<br/>
+<% end %>
 </body>
 </html>

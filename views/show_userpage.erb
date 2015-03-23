@@ -52,16 +52,17 @@ Followed number<br>
 		<form action='/logout' method="GET">
 			<input type="submit" value = "Logout" style="float: right;"/>
 		</form>
-		
-		<% if @not_followed %>
-			<form action='/follow?follower_id='+@user_id.to_s+'&followee_id='+@owner_id.to_s method="GET">
-				<input type="submit" value = "follow" style="float: right;"/>
-			</form>
-		<%else%>
-			<form action='/follow?follower_id='+@user_id.to_s+'&followee_id='+@owner_id.to_s method="GET">
+		<%puts @followed_flag%>
+		<% if @followed_flag %>
+			<form action='/unfollow?follower_id=<%=@user_id%>&followee_id=<%=@owner_id%>' method="POST">
 				<input type="submit" value = "unfollow" style="float: right;"/>
 			</form>
+		<%else%>
+			<form action='/follow?follower_id=<%=@user_id%>&followee_id=<%=@owner_id%>' method="POST">
+				<input type="submit" value = "follow" style="float: right;"/>
+			</form>
 		<%end%>
+
 	<%else%>
 		<form action='/login' method="GET">
 			<input type="submit" value = "Login" style="float: right;"/>
@@ -71,7 +72,8 @@ Followed number<br>
 			<input type="submit" value = "register" style="float: right;"/>
 		</form>
 	<%end%>
-	
+
+
 	<form action="/mypage" method="GET">
 		<input type="submit" value = "mypage" style="float: right;"/>      
 	</form>

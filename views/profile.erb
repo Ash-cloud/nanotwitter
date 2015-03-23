@@ -29,6 +29,7 @@
         <%followee_user = User.find_by(id:followee.user_id)%>
         <%name_of_followee = followee_user.user_name%>
       <form action="/user_page" method="GET">
+        <%session[:owner_id]=followee.user_id%>
         <input type ="hidden",name="user_id",value=<%followee.user_id%>>
         <input type="submit" value = "<%=name_of_followee%>" style="float: blue;"/><br>
       </form>

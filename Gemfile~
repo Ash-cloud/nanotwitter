@@ -7,5 +7,4 @@ gem 'pry-rails'
 gem 'pry-byebug'
 gem 'awesome_print'
 gem 'hirb'
-gem 'rspec'
-gem 'rack-test'
+

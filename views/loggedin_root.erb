@@ -72,9 +72,16 @@ Followed number<br>
  	<% user = User.find_by(id: @user_id)%>
  	<% user_name = user.user_name%>
 	<p><a href="/user_page?user_id=<%= @user_id %>"> <%= user_name %> </a>
-	<% @diff = Time.now - tweet.created_at %>
- 
-	<%= tweet.created_at %></p>
+	<% diff = (Time.now - tweet.created_at).to_i %>
+ 		<% if diff < 60 %>	
+			<%= diff %>s ago </p>
+		<% elsif diff >= 60 && diff < 3600 %>
+			<%= (diff / 60).to_i %>m ago</p>
+		<% elsif diff >= 3600 && diff < 86400 %>
+			<%= (diff / 3600).to_i %>h ago</p>
+		<% else  %>
+			<%= (diff / 86400).to_i %>d ago</p>
+		<% end %>
 	<%= tweet.text%>	
 	<br/>
 <% end %>
