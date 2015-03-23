@@ -73,7 +73,9 @@ Followed number<br>
 </p>
 <% @tweets.each do |tweet| %>
  	<% @user_id= tweet.user_id %>
-	<p><a href="/user_page?user_id=<%= @user_id %>"> <%= @user_id %> </a></p>
+ 	<% user = User.find_by(id: @user_id)%>
+ 	<% user_name = user.user_name%>
+	<p><a href="/user_page?user_id=<%= @user_id %>"> <%= user_name %> </a></p>
 	<%= tweet.text%>	
 	<br/>
 <% end %>

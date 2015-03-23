@@ -53,7 +53,7 @@ class Service
 	end
 
 	def self.getTweetsByID(tweet_id)
-		tweet = Tweet.find_by(tweet_id: tweet_id)
+		tweet = Tweet.find_by(id: tweet_id)
 		if tweet
 			return tweet
 		else

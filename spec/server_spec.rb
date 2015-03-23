@@ -40,11 +40,33 @@ describe "server" do
         response.should == 'email taken'
     end  
      
-    #need tests for getTweetsByID
+    #tests for getTweetsByID
+    it "should return tweet of some tweet_ID" do
+        User.create(user_name:'songruoyun',password:'11111',email:'haha@brandeis')
+        user_id = User.find_by(user_name: 'songruoyun').id
+        Tweet.create(text: "the cake is very delicious",user_id: user_id)
+        tweet_id = Tweet.find_by(user_id: user_id).id
+        response = Service.getTweetsByID(tweet_id)
+        response.text.should == "the cake is very delicious"
+    end
     
-    #need tests for getUserByID
     
-    #need tests for getRecentTweets
+    #tests for getUserByID
+    it "should return the user of certain user id" do
+        user_id = User.find_by(user_name: 'songruoyun').id
+        response = Service.getUserByID(user_id)
+        response.user_name.should == "songruoyun"
+        response.email.should == "haha@brandeis"
+        response.password.should == "11111"
+    end
+    
+    #tests for getRecentTweets-- changed the test slightly b/co getRecentTweets
+    #was altered to return 100 most recent tweets instead of taking in a number
+    it "should return most recent tweets for this test case " do
+        response = Service.getRecentTweets()
+        response.first.text.should == "the cake is very delicious"
+        
+    end
     
     #test for post_tweet
     it "should let user post a tweet" do
@@ -64,17 +86,37 @@ describe "server" do
         tweet_user.user_id.should == User.find_by(user_name: 'zordon').id
         tweet_user.tweet.id.should == tweet_id
     end
-    #test follow --- this test is failing, I don't know why
+    #test follow --- it's passing now
     it "should create a follow relationship between 2 users" do
         followee_id = User.find_by(user_name: 'alf').id
         follower_id = User.find_by(user_name: 'zordon').id
         Service.follow(follower_id, followee_id)
         Follow.where(user_id: followee_id, follower: follower_id).should_not == nil
     end  
-    
-    #need test for unfollow
-    
     #need test for get_followers
+    it "should return all the followers of a given user by user_id" do
+        #I'll create another follower for alf, so he'll have 2 followers
+        #zordon and songruoyun
+        followee_id = User.find_by(user_name: 'alf').id
+        follower_id = User.find_by(user_name: 'songruoyun').id
+        Follow.create(user_id: followee_id, follower: follower_id)
+        #now test if get_followers on 'alf' returns zordon and songruoyun
+        followers = Service.get_followers(followee_id)
+        zordon_id = User.find_by(user_name: 'zordon').id
+        first_follow = Follow.where(user_id: followee_id, follower: zordon_id)
+        second_follow = Follow.where(user_id: followee_id, follower: follower_id)
+        followers.first.should == first_follow
+        followers.second.should == second_follow   
+    end
+    #test for unfollow
+    it "should have a user unfollow another user" do
+        followee_id = User.find_by(user_name: 'alf').id
+        follower_id = User.find_by(user_name: 'zordon').id
+        Service.unfollow(follower_id, followee_id)
+        Follow.where(user_id: followee_id, follower: follower_id).blank?().should == true #should no longer be a relation between these two users
+    end
+    
+   
     
     #need tests for get_stream      
            

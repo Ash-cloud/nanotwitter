@@ -32,10 +32,10 @@ end
 #if user is logged in while user_id in session are different from what in parameter, show loggedin usrepage (visiting other people's page)
 #if user is unlogged in then the page shows will be slightly different from the second situation(no follow and unfollow, login/register button)
 get '/user_page' do
-	@page_owner_id=session[:owner_id]
+	@page_owner_id=params[:user_id]
 	if @page_owner_id.to_s==session[:user_id].to_s #logged in and is the owner, show mypage.erb
 		redirect '/mypage'
-	elsif session[:log_status] #logged in while not the owner, will have follow and unfollow button
+	else #session[:log_status] #logged in while not the owner, will have follow and unfollow button
 		redirect '/show_userpage?owner_id='+@page_owner_id.to_s
 	end
 end
@@ -161,7 +161,7 @@ get '/api/v1/tweet/recent/' do
 	end
 	puts @number
     
-    tweets = Service.all.order(created_at: "DESC").take(@number)
+    tweets = Service.getRecentTweets(@number)
     
 	if tweets 
 		tweets.to_json
