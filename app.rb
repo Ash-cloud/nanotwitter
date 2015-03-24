@@ -1,8 +1,7 @@
-ENV['SINATRA_ENV'] ||= 'development'
 require 'sinatra'
 require 'sinatra/activerecord'
 require_relative 'server'
-
+I18n.enforce_available_locales = false
 
 enable :sessions
 get '/' do
