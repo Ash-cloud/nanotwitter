@@ -2,6 +2,25 @@ ENV['SINATRA_ENV'] = 'test'
 require_relative '../app.rb'
 
 describe "server" do 
+    before(:all) do
+        #setting up the environment for testing
+        env_index = ARGV.index("-e")
+        env_arg = ARGV[env_index + 1] if env_index
+        env = env_arg || ENV["SINATRA_ENV"] || "development"
+        databases = YAML.load_file("config/database.yml")
+        puts "########"+databases[env].to_s
+        ActiveRecord::Base.establish_connection(databases[env])
+        #if environment is test then delete everything in the test database
+        #so the tests will run anew
+  
+        if env == "test"
+            puts "starting in test mode" 
+            User.delete_all 
+            Follow.delete_all
+            Tweet.delete_all
+            TweetUser.delete_all 
+        end
+    end
     #first 3 tests are for login method
     it "should login with correct name and password" do
         User.create(user_name:'alf',password:'123',email:'alf@brandeis')
@@ -103,8 +122,8 @@ describe "server" do
         #now test if get_followers on 'alf' returns zordon and songruoyun
         followers = Service.get_followers(followee_id)
         zordon_id = User.find_by(user_name: 'zordon').id
-        first_follow = Follow.where(user_id: followee_id, follower: zordon_id)
-        second_follow = Follow.where(user_id: followee_id, follower: follower_id)
+        first_follow = Follow.find_by(user_id: followee_id, follower: zordon_id)
+        second_follow = Follow.find_by(user_id: followee_id, follower: follower_id)
         followers.first.should == first_follow
         followers.second.should == second_follow   
     end
