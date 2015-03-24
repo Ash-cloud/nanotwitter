@@ -1,5 +1,5 @@
+ENV['SINATRA_ENV'] ||= 'development'
 require 'sinatra'
-require './app'
 require 'sinatra/activerecord'
 require_relative 'server'
 
@@ -8,23 +8,6 @@ enable :sessions
 get '/' do
 	@tweets = Service.getRecentTweets()
 	erb :welcome
-end
-
-#setting up the environment for testing
-env_index = ARGV.index("-e")
-env_arg = ARGV[env_index + 1] if env_index
-env = env_arg || ENV["SINATRA_ENV"] || "development"
-databases = YAML.load_file("config/database.yml")
-puts "########"+databases[env].to_s
-ActiveRecord::Base.establish_connection(databases[env])
-#if environment is test then delete everything in the test database
-#so the tests will run anew
-if env == "test"
-    puts "starting in test mode" 
-    User.delete_all 
-    Follow.delete_all
-    Tweet.delete_all
-    TweetUser.delete_all 
 end
 
 #this router show erbs depending on the status of current user. It require parameters :user_id to render the view for userpage.
