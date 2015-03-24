@@ -12,4 +12,3 @@ configure :production, :development do
 			:encoding => 'utf8'
 	)
 end
-

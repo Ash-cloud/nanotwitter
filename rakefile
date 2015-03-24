@@ -1,15 +1,13 @@
 require 'rubygems' 
 require 'active_record'
+require 'sinatra/activerecord'
 require 'sinatra/activerecord/rake'
 require 'yaml'
 desc "Load the environment"
 task :environment do
 	env = ENV["SINATRA_ENV"] || "development"
- 	puts env
 	databases = YAML.load_file("config/database.yml") 
 	ActiveRecord::Base.establish_connection(databases[env])
-	puts databases[env]
-	 
 end
 namespace :db do
 	desc "Migrate the database" 

@@ -39,7 +39,10 @@
 
 <div id="nav">
 Picture<br>
-Profile<br>
+<form action = "/profile" method="GET">
+<input type="submit" value = "Profile" style="float: blue;"/>
+</form>
+<br>
 Follower number<br>
 Followed number<br>
 </div>
@@ -75,7 +78,7 @@ Followed number<br>
 		<input type="submit" value = "mypage" style="float: right;"/>      
 	</form>
 
-	<h2><%= @owner_name%>'s Tweets </h2>
+	<h2><%= @owner_name%>'s Tweet </h2>
 	<% @tweets.each do |tweet| %>
  	<% @user_id= tweet.user_id %>
  	<% user = User.find_by(id: @user_id)%>

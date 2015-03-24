@@ -2,12 +2,6 @@ ENV['SINATRA_ENV'] = 'test'
 require_relative '../app.rb'
 
 describe "server" do 
-    before(:all) do
-        User.delete_all 
-        Follow.delete_all
-        Tweet.delete_all
-        TweetUser.delete_all
-    end
     #first 3 tests are for login method
     it "should login with correct name and password" do
         User.create(user_name:'alf',password:'123',email:'alf@brandeis')
@@ -111,7 +105,8 @@ describe "server" do
         zordon_id = User.find_by(user_name: 'zordon').id
         first_follow = Follow.where(user_id: followee_id, follower: zordon_id)
         second_follow = Follow.where(user_id: followee_id, follower: follower_id)
-        followers.size.should == 2  
+        followers.first.should == first_follow
+        followers.second.should == second_follow   
     end
     #test for unfollow
     it "should have a user unfollow another user" do
@@ -119,6 +114,10 @@ describe "server" do
         follower_id = User.find_by(user_name: 'zordon').id
         Service.unfollow(follower_id, followee_id)
         Follow.where(user_id: followee_id, follower: follower_id).blank?().should == true #should no longer be a relation between these two users
-    end     
+    end
+    
+   
+    
+    #need tests for get_stream      
            
 end
