@@ -3,14 +3,11 @@ require 'sinatra/activerecord'
 require_relative 'server'
 require './config/environments'
 
-
 enable :sessions
 get '/' do
 	@tweets = Service.getRecentTweets()
 	erb :welcome
 end
-
-
 
 #this router show erbs depending on the status of current user. It require parameters :user_id to render the view for userpage.
 #if user is logged in and user_id in session is equal to parameter, then show mypage(visiting his/her own page)
