@@ -3,9 +3,10 @@ require_relative '../app.rb'
 describe "server" do 
     before(:all) do
         #setting up the environment for testing
-        env = :test
+        env='test'
         databases = YAML.load_file("config/database.yml")
-        puts "########"+databases[env].to_s
+	puts env
+        #puts "########"+databases[env]
         ActiveRecord::Base.establish_connection(databases[env])
         #if environment is test then delete everything in the test database
         #so the tests will run anew
