@@ -1,5 +1,7 @@
 require 'rubygems' 
 require 'active_record'
+require 'sinatra/activerecord'
+require 'sinatra/activerecord/rake'
 require 'yaml'
 desc "Load the environment"
 task :environment do
