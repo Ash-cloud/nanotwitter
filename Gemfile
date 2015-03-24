@@ -2,15 +2,11 @@ gem "sinatra"
 gem "activerecord"
 gem "sinatra-activerecord"
 
-group :production do
+group :production,:development do
   gem "pg"
 end
-group :test,:development do
+group :test do
   gem 'sqlite3'
-  gem 'pry-rails'
-  gem 'pry-byebug'
-  gem 'awesome_print'
-  gem 'hirb'
   gem 'rspec'
   gem 'rack-test'
 end
