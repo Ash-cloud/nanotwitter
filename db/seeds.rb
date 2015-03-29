@@ -8,7 +8,7 @@ require './server'
 file = File.new("./db/users.csv")
 file.each_line("\n") do |row|
     columns = row.split(",")
-    user_name = columns[1]
+    user_name = columns[1].chomp
     email = user_name+"@email.com"
     password = "1234"
     Service.register(user_name, password, email)
