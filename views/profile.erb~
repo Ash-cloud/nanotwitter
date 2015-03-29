@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">  
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+    <title><%=user_name%>'s Profile Page</title>
+    <style>
+    	h1 {text-align: center;}
+      h2 {text-align: center;}
+      h3 {text-align: center;} 
+    </style>
+  </head>  
+  <body>
+	
+     <form action='/logout' method="GET">
+     <input type="submit" value = "Logout" style="float: right;"/>
+     </form>
+     
+    <form action="/mypage" method="GET">
+      <input type="submit" value = "<%=user_name%>" style="float: right;"/>
+    </form>
+    <h1><%=user_name%>'s Profile Page</h1>
+    <br><br>
+    <center><%=user_name%></center><br>
+    <center><%=email%></center><br>
+    <br>
+    <h3>MY FOLLOWED USERS:</h3>
+    <center>
+      <%users_followed.each do |followee|%>
+        <%followee_user = User.find_by(id:followee.user_id)%>
+        <%name_of_followee = followee_user.user_name%>
+      <form action="/user_page" method="GET">
+        <%session[:owner_id]=followee.user_id%>
+        <input type ="hidden",name="user_id",value=<%followee.user_id%>>
+        <input type="hidden" name="path" value="/profile">
+        <input type="submit" value = "<%=name_of_followee%>" style="float: blue;"/><br>
+      </form>
+      <%end%>
+    </center>
+  </body>  
+</html>  

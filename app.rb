@@ -4,9 +4,16 @@ require_relative 'server'
 require './config/environments'
 
 enable :sessions
+get '/loaderio-88f56dd64319d19bf87e6bb4cb6fd7fe/' do
+
+end
 get '/' do
-	@tweets = Service.getRecentTweets()
-	erb :welcome
+	if session[:log_status]==true
+		redirect '/loggedin_root'
+	else 
+		@tweets = Service.getRecentTweets()
+		erb :welcome
+	end
 end
 
 #this router show erbs depending on the status of current user. It require parameters :user_id to render the view for userpage.
@@ -14,10 +21,13 @@ end
 #if user is logged in while user_id in session are different from what in parameter, show loggedin usrepage (visiting other people's page)
 #if user is unlogged in then the page shows will be slightly different from the second situation(no follow and unfollow, login/register button)
 get '/user_page' do
+    #@page_owner_id = session[:owner_id]
 	@page_owner_id=params[:user_id]
 	if @page_owner_id.to_s==session[:user_id].to_s #logged in and is the owner, show mypage.erb
 		redirect '/mypage'
 	else #session[:log_status] #logged in while not the owner, will have follow and unfollow button
+	    #if params[:path] == 'profile'
+	    puts '############### page owner id is' + @page_owner_id.to_s
 		redirect '/show_userpage?owner_id='+@page_owner_id.to_s
 	end
 end
@@ -29,13 +39,14 @@ get '/mypage' do
 end
 get '/loggedin_root' do
 	@tweets=Service.timeline(session[:user_id])
-	erb :loggedin_root
+	@recommendations=Service.get_users_to_follow(session[:user_id])
+	erb :loggedin_root, :locals => {'recommendations' => @recommendations}
 end
 
 get '/show_userpage' do
 	puts 'in show user page'
 	@user_id=session[:user_id]
-	@owner_id=params[:owner_id]
+	@owner_id=params[:owner_id] #was params
 	@tweets=Service.get_stream(params[:owner_id])
 	@owner_name=User.find_by(id:params[:owner_id]).user_name
 	@log_status=session[:log_status]
@@ -302,6 +313,8 @@ post '/tweet' do
 		redirect '/loggedin_root'
 	elsif @sent_from == '/mypage'
 		redirect '/mypage'
+	else 
+		puts "You can't tweet from here"
 	end
 	
 

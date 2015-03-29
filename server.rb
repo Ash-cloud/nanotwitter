@@ -124,5 +124,31 @@ class Service
 		tweets = Tweet.where(user_id:user_id).order(created_at: "DESC").take(100)
 		return tweets
 	end
+	
+    def self.get_users_to_follow(user_id)
+	    #get all the users who aren't you
+		@other_users = User.where.not(id: user_id)
+		puts("number of other users is #{@other_users.size}")
+		#get all the people you follow
+		@followees = followers(user_id)
+		
+		@recommended = []
+		
+		@other_users.each do |other_user|
+		    followed = false
+			@followees.each do |followee|
+			    #if other_user is a followee of you, followed is true
+				if other_user.id == followee.user_id
+					followed = true
+				end
+			end	
+			#if you don't follow other_user yet, push to recommended
+			if followed == false  
+			    @recommended.push(other_user)
+			end				
+		end
+		return @recommended
+	end
 
+	
 end

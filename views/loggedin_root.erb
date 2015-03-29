@@ -44,6 +44,7 @@
 <input type="submit" value = "mypage" style="float: right;"/>      
 </form>
 
+
 <div id="nav">
 Picture<br>
 <form action = "/profile" method="GET">
@@ -58,8 +59,7 @@ Followed number<br>
 <h2>Tweet area</h2>
 <p>
 <form action="/tweet" method="POST"> <!--Update the tweets through methods in /tweet-->
-	<textarea name="tweet_content" cols=80 rows=5/>
-		Post a tweet here
+	<textarea name="tweet_content" placeholder="post a tweet here" cols=80 rows=5/>
 	</textarea>
 	<br/>
 	<br/>
@@ -83,6 +83,18 @@ Followed number<br>
 			<%= (diff / 86400).to_i %>d ago</p>
 		<% end %>
 	<%= tweet.text%>	
+	<br/>
+<% end %>
+
+</div>
+<div id="section">
+<h2 align = "right"> Follow Me</h2>
+<p>
+
+<% @recommendations.each do |potential_followee| %>
+ 	<% @user_id= potential_followee.id %>
+ 	<% potential_followee_name = potential_followee.user_name%>
+	<p align = "right"><a href="/user_page?user_id=<%= @user_id %>"> <%= potential_followee_name %> </a>
 	<br/>
 <% end %>
 
