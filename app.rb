@@ -4,7 +4,7 @@ require_relative 'server'
 require './config/environments'
 
 enable :sessions
-get '/loaderio-88f56dd64319d19bf87e6bb4cb6fd7fe/' do
+get '/loaderio-2c5b20f8cbc30dfc026cc8d80ceb4a67/' do
     erb :loader
 end
 get '/' do
