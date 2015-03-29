@@ -4,6 +4,9 @@ require_relative 'server'
 require './config/environments'
 
 enable :sessions
+get '/loaderio-88f56dd64319d19bf87e6bb4cb6fd7fe/' do
+    erb: :loader
+end
 get '/' do
 	if session[:log_status]==true
 		redirect '/loggedin_root'
