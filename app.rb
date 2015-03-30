@@ -3,6 +3,11 @@ require 'sinatra/activerecord'
 require_relative 'server'
 require './config/environments'
 
+configure :production do
+  require 'newrelic_rpm'
+end
+
+
 enable :sessions
 get '/loaderio-2c5b20f8cbc30dfc026cc8d80ceb4a67/' do
     erb :loader

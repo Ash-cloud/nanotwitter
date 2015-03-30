@@ -1,6 +1,7 @@
 gem "sinatra"
 gem "activerecord"
 gem "sinatra-activerecord"
+gem 'newrelic_rpm'
 
 group :production,:development do
   gem "pg"
