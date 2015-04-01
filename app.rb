@@ -7,6 +7,9 @@ configure :production do
   require 'newrelic_rpm'
 end
 
+get '/loaderio-bb5a35bfa0186405c4a48a10d3f67e60/' do
+  "loaderio-bb5a35bfa0186405c4a48a10d3f67e60"
+end
 
 enable :sessions
 get '/loaderio-2c5b20f8cbc30dfc026cc8d80ceb4a67/' do
