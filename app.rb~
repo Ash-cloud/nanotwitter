@@ -1,17 +1,31 @@
 require 'sinatra'
 require 'sinatra/activerecord'
-require_relative 'server'
+#require_relative 'server'
 require './config/environments'
+require_relative 'tweet_server'
+require_relative 'user_server'
+require_relative 'follow_server'
+require_relative 'tweet_user_server'
+
+
+
+configure :production do
+  require 'newrelic_rpm'
+end
+
+get '/loaderio-ceac0dc59fc5754aa4affe8ba2bf6242/' do
+  "loaderio-ceac0dc59fc5754aa4affe8ba2bf6242"
+end
 
 enable :sessions
-get '/loaderio-88f56dd64319d19bf87e6bb4cb6fd7fe/' do
-    erb: :loader
+get '/loaderio-2c5b20f8cbc30dfc026cc8d80ceb4a67/' do
+    erb :loader
 end
 get '/' do
 	if session[:log_status]==true
 		redirect '/loggedin_root'
 	else 
-		@tweets = Service.getRecentTweets()
+		@tweets = Tweet_Service.getRecentTweets()
 		erb :welcome
 	end
 end
@@ -34,12 +48,12 @@ end
 
 
 get '/mypage' do
-	@tweets=Service.get_stream(session[:user_id])
+	@tweets=Tweet_Service.get_stream(session[:user_id])
 	erb :mypage
 end
 get '/loggedin_root' do
-	@tweets=Service.timeline(session[:user_id])
-	@recommendations=Service.get_users_to_follow(session[:user_id])
+	@tweets=User_Service.timeline(session[:user_id])
+	@recommendations=User_Service.get_users_to_follow(session[:user_id])
 	erb :loggedin_root, :locals => {'recommendations' => @recommendations}
 end
 
@@ -47,21 +61,21 @@ get '/show_userpage' do
 	puts 'in show user page'
 	@user_id=session[:user_id]
 	@owner_id=params[:owner_id] #was params
-	@tweets=Service.get_stream(params[:owner_id])
-	@owner_name=User.find_by(id:params[:owner_id]).user_name
+	@tweets=Tweet_Service.get_stream(params[:owner_id])
+	@owner_name=User.find_by(id:params[:owner_id]).user_name #db call
 	@log_status=session[:log_status]
-	@followed_flag=Service.followed?(@owner_id,@user_id)
+	@followed_flag=Follow_Service.followed?(@owner_id,@user_id)
 	erb :show_userpage
 end
 
 
 get '/profile' do
-    users_followed = Service.followers(session[:user_id])
+    users_followed = Follow_Service.followers(session[:user_id])
     users_followed.each do |followee|
         puts "follows #{followee.user_id}"
     end 
     user_name = session[:user_name]
-    email = Service.get_email_by_id(session[:user_id])
+    email = User_Service.get_email_by_id(session[:user_id])
 	erb :profile, :locals => {'user_name' => user_name, 'users_followed' => users_followed, 'email' => email}
 end
 
@@ -87,23 +101,25 @@ end
 post '/follow' do
 	@followee_id=params[:followee_id]
 	@follower_id=params[:follower_id]
-	Service.follow(@follower_id,@followee_id)
+	Follow_Service.follow(@follower_id,@followee_id)
+	#implement a TweetUser_Service.add_tweets
 	redirect back
 end
 post '/unfollow' do
 	@followee_id=params[:followee_id]
 	@follower_id=params[:follower_id]
-	Service.unfollow(@follower_id,@followee_id)
+	Follow_Service.unfollow(@follower_id,@followee_id)
+	#implement a TweetUser_Service.delete_tweets
 	redirect back
 
 end
 get '/redirect_login' do
 	@user_name=params[:user_name]
 	@password=params[:password]
-	response=Service.login(@user_name,@password)
+	response=User_Service.login(@user_name,@password)
 	if response=='logged_in'
 	       	session[:user_name]=@user_name
-		session[:user_id]=User.find_by(user_name: @user_name).id
+		session[:user_id]=User.find_by(user_name: @user_name).id #db call
 		session[:log_status]=true
 		redirect '/loggedin_root'
 	else
@@ -112,7 +128,7 @@ get '/redirect_login' do
 
 end
 get '/redirect_register' do
-    message = Service.register(params[:user_name],params[:password],params[:email])
+    message = User_Service.register(params[:user_name],params[:password],params[:email])
 	if message == 'ok'
 	    redirect '/login'
 	else
@@ -123,7 +139,7 @@ end
 #retrieves a tweet given a tweet id 
 get '/api/v1/tweet' do
     #tweet = Tweet.find_by_id(params[:id])
-    tweet = Service.getTweetsByID(params[:id])
+    tweet = Tweet_Service.getTweetsByID(params[:id])
 	
 	if tweet
 		tweet.to_json
@@ -135,7 +151,7 @@ end
 #retrieves a user given a user id
 get '/api/v1/user' do
     #user = User.find_by_id(params[:id])
-    user = Service.getUserByID(params[:id])
+    user = User_Service.getUserByID(params[:id])
 	
 	if user
 		user.to_json
@@ -154,7 +170,7 @@ get '/api/v1/tweet/recent/' do
 	end
 	puts @number
     
-    tweets = Service.getRecentTweets(@number)
+    tweets = Tweet.getRecentTweets(@number)
     
 	if tweets 
 		tweets.to_json
@@ -167,7 +183,7 @@ end
 get '/api/v1/users/*/tweets' do
     #@user_id = params[:user_id]
     @user_id = params[:splat].first.split("/")
-    tweets = Tweet.where(user_id:@user_id).order(created_at: "DESC").take(100)
+    tweets = Tweet_Service.where(user_id:@user_id).order(created_at: "DESC").take(100)
     if tweets
         tweets.to_json
     else
@@ -177,7 +193,7 @@ end
 #return a list of a given user's followers
 get '/api/v1/user/follower' do
     @user_id = session[:user_id]
-    follows = Follow.where(user_id:@user_id)
+    follows = Follow_Service.where(user_id:@user_id)
     if follows
         follows.to_json
     else
@@ -189,9 +205,9 @@ end
 get '/api/v1/user/follower/*/tweet' do
     @user_id = session[:user_id]
     @follower_id = params[:splat].second.split("/")
-    follow = Follow.where(user_id:@user_id,follower:@follower_id)
+    follow = Follow.where(user_id:@user_id,follower:@follower_id) #db call
     if follow.length > 0 #meaning follower for that user was found
-        followers_tweets = Tweet.where(user_id:@follower_id).order(created_at:"DESC").take(100)
+        followers_tweets = Tweet.where(user_id:@follower_id).order(created_at:"DESC").take(100) #db call
         followers_tweets.to_json
     else
         error 404, {:error => "User did not have this follower"}.to_json
@@ -204,7 +220,7 @@ get '/api/v1/user/*/modify' do
     @user_id = session[:user_id]
     @password = params[:password]
     
-    user = User.find_by(id:@user_id)
+    user = User.find_by(id:@user_id) #db call
     if !user
         error 404, {:error => "User not found"}.to_json
     else
@@ -221,11 +237,11 @@ end
 get '/api/v1/user/follow' do
     follower_id = session[:user_id]
     followee_id = params[:user_id]
-    followee= User.find_by(id:followee_id)
+    followee= User.find_by(id:followee_id) #db call
     if !followee
         error 404, {:error => "User not found"}.to_json
     else
-        follow = Follow.create(user_id:followee_id,follower:follower_id)
+        follow = Follow.create(user_id:followee_id,follower:follower_id) #db call
         follow.to_json
     end
 
@@ -234,12 +250,12 @@ end
 get '/api/v1/user/unfollow' do
     follower_id = session[:user_id]
     followee_id = params[:user_id]
-    followee = User.find_by(id:followee_id)
+    followee = User.find_by(id:followee_id) #db call
     if !followee
         error 404, {:error => "User not found"}.to_json
     else
-        f = Follow.where(user_id:followee_id,follower:follower_id)
-        Follow.delete(f)
+        f = Follow.where(user_id:followee_id,follower:follower_id) #db call
+        Follow.delete(f) #db call
         #not sure what this should return in terms of JSON
     end
     
@@ -254,7 +270,7 @@ post '/api/v1/user/register' do
 		@email=params[:email]
 		@user_name=params[:user_name]
 		@pass=params[:password]
-		user = User.create(email:@email,user_name:@user_name,password:@pass) 
+		user = User.create(email:@email,user_name:@user_name,password:@pass) #db call
 		if user.valid?
 			user.to_json
 		else
@@ -270,16 +286,16 @@ post '/api/v1/tweet' do
 	begin
 		@text=params[:tweet_content]
 		@user_id=session[:user_id]
-		tweet = Tweet.create(text:@text,user_id:@user_id)
+		tweet = Tweet.create(text:@text,user_id:@user_id) #db call
 
 		@tweet_id= tweet[:id]
-		tweet_user = TweetUser.create(tweet_id:@tweet_id,user_id:@user_id)
+		tweet_user = TweetUser.create(tweet_id:@tweet_id,user_id:@user_id) #db call
 		
-		followers = Follow.where(user_id: @user_id)
+		followers = Follow.where(user_id: @user_id) #db call
 		
 		followers.each do |follower|
 
-			TweetUser.create(user_id: follower[:follower], tweet_id: @tweet_id)	
+			TweetUser.create(user_id: follower[:follower], tweet_id: @tweet_id)	#db call
 		end
 		
 		status 200
@@ -296,17 +312,17 @@ post '/tweet' do
 	@user_id=session[:user_id]
 	@sent_from=params[:path]
 
-	tweet = Service.post_tweet(@text,@user_id)
+	tweet = Tweet_Service.post_tweet(@text,@user_id)
 
 	@tweet_id= tweet[:id]
 
-	Service.post_tweet_user(@user_id,@tweet_id)
+	TweetUser_Service.post_tweet_user(@user_id,@tweet_id)
 
-	followers = Service.get_followers(@user_id)
+	followers = Follow_Service.get_followers(@user_id)
 
 	followers.each do |follower|
 
-		Service.post_tweet_user(follower[:follower],@tweet_id)	
+		TweetUser_Service.post_tweet_user(follower[:follower],@tweet_id)	
 	end
 
 	if @sent_from == '/loggedin_root'

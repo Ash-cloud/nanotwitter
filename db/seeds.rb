@@ -2,9 +2,10 @@ require './models/user'
 require './models/tweet'
 require './models/followee'
 require 'csv'
-require './server'
+require './tweet_user_server'
+require './follow_server'
 
-
+#load data for user table
 file = File.new("./db/users.csv")
 file.each_line("\n") do |row|
     columns = row.split(",")
@@ -15,6 +16,7 @@ file.each_line("\n") do |row|
      
 end
 
+#load data for follow table
 filename = './db/follows.csv'
 file = File.new(filename, 'r')
 
@@ -26,6 +28,7 @@ file.each_line("\n") do |row|
 
 end
 
+#load and create tweet_user table
 filename = './db/tweets.csv'
 file = File.new(filename, 'r')
 
@@ -42,11 +45,13 @@ file.each_line("\n") do |row|
 	tweet=Tweet.create(text: text,user_id: user_id) #db call
 	tweet.update(created_at: time,updated_at: time)
 	tweet_id= tweet[:id]
-	TweetUser_Service.post_tweet_user(user_id,tweet_id)
+	# create an entry in tweet_user table, both follower(user_id in table) and creator_id are creator himself
+	TweetUser_Service.post_tweet_user(user_id,tweet_id,user_id)
 	followers = Follow_Service.get_followers(user_id)
 	
 	followers.each do |follower|
-		TweetUser_Service.post_tweet_user(follower[:follower],tweet_id)	
+		#create entries for followers of the tweet owner
+		TweetUser_Service.post_tweet_user(follower[:follower],tweet_id,user_id)	
 	end
 
  end

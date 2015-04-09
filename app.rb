@@ -8,19 +8,22 @@ require_relative 'follow_server'
 require_relative 'tweet_user_server'
 
 
-
+enable :sessions
 configure :production do
   require 'newrelic_rpm'
 end
 
+#loadio code for TA
 get '/loaderio-ceac0dc59fc5754aa4affe8ba2bf6242/' do
   "loaderio-ceac0dc59fc5754aa4affe8ba2bf6242"
 end
 
-enable :sessions
+#loadio code for us
 get '/loaderio-2c5b20f8cbc30dfc026cc8d80ceb4a67/' do
     erb :loader
 end
+
+#welcome page
 get '/' do
 	if session[:log_status]==true
 		redirect '/loggedin_root'
@@ -40,23 +43,24 @@ get '/user_page' do
 	if @page_owner_id.to_s==session[:user_id].to_s #logged in and is the owner, show mypage.erb
 		redirect '/mypage'
 	else #session[:log_status] #logged in while not the owner, will have follow and unfollow button
-	    #if params[:path] == 'profile'
-	    puts '############### page owner id is' + @page_owner_id.to_s
 		redirect '/show_userpage?owner_id='+@page_owner_id.to_s
 	end
 end
 
-
+# Show the stream: all the tweet have posted by that pageowner
 get '/mypage' do
 	@tweets=Tweet_Service.get_stream(session[:user_id])
 	erb :mypage
 end
+
+#Create timeline and give recommendations for user to follow
 get '/loggedin_root' do
 	@tweets=User_Service.timeline(session[:user_id])
 	@recommendations=User_Service.get_users_to_follow(session[:user_id])
 	erb :loggedin_root, :locals => {'recommendations' => @recommendations}
 end
 
+#Viwing other people's page see what they have posted and do follow and unfollow action
 get '/show_userpage' do
 	puts 'in show user page'
 	@user_id=session[:user_id]
@@ -68,7 +72,7 @@ get '/show_userpage' do
 	erb :show_userpage
 end
 
-
+#Show profile: the users he have followed and the email he used to register
 get '/profile' do
     users_followed = Follow_Service.followers(session[:user_id])
     users_followed.each do |followee|
@@ -79,7 +83,7 @@ get '/profile' do
 	erb :profile, :locals => {'user_name' => user_name, 'users_followed' => users_followed, 'email' => email}
 end
 
-
+#login, create session
 get '/login' do
 	if session[:log_status]==true
 		redirect '/loggedin_root'
@@ -88,6 +92,7 @@ get '/login' do
 	end
 end
 
+#logout, clean session
 get '/logout' do
 
 	session[:user_name]=nil
@@ -95,22 +100,27 @@ get '/logout' do
 	session[:log_status]=false
 	redirect '/'
 end
+#register a new account
 get '/register' do
 	erb :register
 end
+
 post '/follow' do
 	@followee_id=params[:followee_id]
 	@follower_id=params[:follower_id]
 	Follow_Service.follow(@follower_id,@followee_id)
+	TweetUser_Service.add_old_tweets(@follower_id,@followee_id)
 	redirect back
 end
 post '/unfollow' do
 	@followee_id=params[:followee_id]
 	@follower_id=params[:follower_id]
 	Follow_Service.unfollow(@follower_id,@followee_id)
+	TweetUser_Service.delete_old_tweets(@follower_id,@followee_id)
 	redirect back
 
 end
+#check if user could login or not
 get '/redirect_login' do
 	@user_name=params[:user_name]
 	@password=params[:password]
@@ -125,6 +135,7 @@ get '/redirect_login' do
 	end
 
 end
+#check if register successfully, if not back to register page
 get '/redirect_register' do
     message = User_Service.register(params[:user_name],params[:password],params[:email])
 	if message == 'ok'
@@ -314,13 +325,13 @@ post '/tweet' do
 
 	@tweet_id= tweet[:id]
 
-	TweetUser_Service.post_tweet_user(@user_id,@tweet_id)
+	TweetUser_Service.post_tweet_user(@user_id,@tweet_id,@user_id) 
 
 	followers = Follow_Service.get_followers(@user_id)
 
 	followers.each do |follower|
 
-		TweetUser_Service.post_tweet_user(follower[:follower],@tweet_id)	
+		TweetUser_Service.post_tweet_user(follower[:follower],@tweet_id,@user_id)	
 	end
 
 	if @sent_from == '/loggedin_root'

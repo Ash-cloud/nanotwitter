@@ -21,6 +21,7 @@ ActiveRecord::Schema.define(version: 4) do
   create_table "tweet_users", force: :cascade do |t|
     t.integer "user_id"
     t.integer "tweet_id"
+    t.string  "creator_id", null: false
   end
 
   add_index "tweet_users", ["tweet_id"], name: "index_tweet_users_on_tweet_id"
