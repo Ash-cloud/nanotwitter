@@ -11,7 +11,7 @@ file.each_line("\n") do |row|
     user_name = columns[1].chomp
     email = user_name+"@email.com"
     password = "1234"
-    Service.register(user_name, password, email)
+    User_Service.register(user_name, password, email)
      
 end
 
@@ -22,7 +22,7 @@ file.each_line("\n") do |row|
 	columns = row.split(",")
 	user_id=columns[0]
 	follower=columns[1]
-	Follow.create(user_id: user_id, follower: follower)
+	Follow.create(user_id: user_id, follower: follower) #db call
 
 end
 
@@ -39,14 +39,14 @@ file.each_line("\n") do |row|
 	user_id= columns[0]
 	text=rest[0]
 	time=rest[1]
-	tweet=Tweet.create(text: text,user_id: user_id)
+	tweet=Tweet.create(text: text,user_id: user_id) #db call
 	tweet.update(created_at: time,updated_at: time)
 	tweet_id= tweet[:id]
-	Service.post_tweet_user(user_id,tweet_id)
-	followers = Service.get_followers(user_id)
+	TweetUser_Service.post_tweet_user(user_id,tweet_id)
+	followers = Follow_Service.get_followers(user_id)
 	
 	followers.each do |follower|
-		Service.post_tweet_user(follower[:follower],tweet_id)	
+		TweetUser_Service.post_tweet_user(follower[:follower],tweet_id)	
 	end
 
  end

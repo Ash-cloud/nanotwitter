@@ -4,6 +4,20 @@
     </head>
 <body>
 
+<form action="/login" method="GET">
+<!--<button name = "button" type "button">
+    <strong>Register</strong>
+    </button>-->
+<input type="submit" value="Login" style="float: right;"> 
+</form>
+<form action="/" method="GET">
+<!--<button name = "button" type "button">
+    <strong>Register</strong>
+    </button>-->
+<input type="submit" value="Home" style="float: right;"> 
+
+</form>
+
 <h1>Make a New Account</h1>
 <br/>
 To sign up for a new account, please enter your name, password, and a username.
@@ -11,7 +25,7 @@ To sign up for a new account, please enter your name, password, and a username.
 <form action='/redirect_register' method="GET">
     Username: <input type="text" name="user_name">
     <br/>
-    Password: <input type="text" name="password">
+    Password: <input type="password" name="password">
     <br/>
     Email: <input type="text" name="email">
     <input type="submit" value="Register"> 
