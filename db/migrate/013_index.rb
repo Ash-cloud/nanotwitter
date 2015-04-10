@@ -1,5 +1,5 @@
 class AddIndex < ActiveRecord::Migration
     def change
-    	add_index(:users, :id)	    
+    	remove_index(:users, :id)	    
     end
 end
