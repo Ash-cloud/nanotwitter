@@ -46,8 +46,8 @@ get '/user_page' do
 		redirect '/show_userpage?owner_id='+@page_owner_id.to_s
 	end
 end
-get '/pubpayload' do
-	send_file './payload'
+get '/payload' do
+	erb :payload
 end
 # Show the stream: all the tweet have posted by that pageowner
 get '/mypage' do
