@@ -131,11 +131,14 @@ get '/redirect_login' do
 	       	session[:user_name]=@user_name
 		session[:user_id]=User.find_by(user_name: @user_name).id #db call
 		session[:log_status]=true
-		redirect '/loggedin_root'
+		#redirect '/loggedin_root'
+		redirect '/empty'
 	else
 		redirect '/login'
 	end
 
+end
+get '/empty' do
 end
 #check if register successfully, if not back to register page
 get '/redirect_register' do
