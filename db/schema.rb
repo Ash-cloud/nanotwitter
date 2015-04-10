@@ -11,21 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 4) do
+ActiveRecord::Schema.define(version: 9) do
 
   create_table "follows", force: :cascade do |t|
     t.integer "user_id"
     t.integer "follower"
   end
 
+  add_index "follows", ["user_id"], name: "index_follows_on_user_id"
+
   create_table "tweet_users", force: :cascade do |t|
     t.integer "user_id"
     t.integer "tweet_id"
     t.string  "creator_id", null: false
   end
-
-  add_index "tweet_users", ["tweet_id"], name: "index_tweet_users_on_tweet_id"
-  add_index "tweet_users", ["user_id"], name: "index_tweet_users_on_user_id"
 
   create_table "tweets", force: :cascade do |t|
     t.string   "text"
