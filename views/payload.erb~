@@ -1,7 +1,0 @@
-{
-  "keys": ["username", "password"] ,
-  "values": [
-    ["Mac", "1234"],
-    ["Ignacio", "1234"],
-  ]
-}
