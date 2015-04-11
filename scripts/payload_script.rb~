@@ -1,6 +1,0 @@
-require 'csv'
-
-file = File.new("./db/users.csv")
-file.each_line("\n") do |row|
-    columns = row.split(",")
-    user_name = columns[1].chomp

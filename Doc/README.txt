@@ -10,3 +10,5 @@ Nano Twitter V0.4 Modification Log
 	1.Insert at most 100 tweets to new followers’ timeline.
 	2.Delete all tweet from user’s timeline when User unfollow a followee.
 - Add index on several columns to improve performance
+
+- Add some script to generate payload file for load.io to send different request when doing test
