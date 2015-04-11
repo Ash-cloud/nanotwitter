@@ -12,3 +12,5 @@ Nano Twitter V0.4 Modification Log
 - Add index on several columns to improve performance
 
 - Add some script to generate payload file for load.io to send different request when doing test
+
+- Improved the API performance by replacing ‘where’ by ‘find_by’.
