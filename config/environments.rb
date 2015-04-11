@@ -10,7 +10,7 @@ configure :production do
 			:password => db.password,
 			:database => db.path[1..-1],
 			:encoding => 'utf8',
-			:pool => 15
+			:pool => 10
 	)
 end
 
