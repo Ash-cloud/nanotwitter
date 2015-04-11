@@ -61,7 +61,8 @@ end
 #Create timeline and give recommendations for user to follow
 get '/loggedin_root' do
 	@tweets=User_Service.timeline(session[:user_id])
-	@recommendations=User_Service.get_users_to_follow(session[:user_id])
+	#@recommendations=User_Service.get_users_to_follow(session[:user_id])
+	@recommendations = []
 	erb :loggedin_root, :locals => {'recommendations' => @recommendations}
 end
 
