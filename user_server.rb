@@ -57,37 +57,8 @@ class User_Service
 	end
     #now this method generates 10 recommendations at random (of users not yet followed)
 	def self.get_users_to_follow(user_id)
-	    #get all the users who aren't you
-		@other_users = User.where.not(id: user_id)
-		puts("number of other users is #{@other_users.size}")
-		#get all the people you follow
-		@followees = Follow_Service.followers(user_id)
-		
-		@recommended = []
-		num_recommendations = 0;
-		while num_recommendations < 11 #want to get 10 random recommendations
-		    index = Random.rand(@other_users.size)
-		    potential_recommendation = @other_users[index]
-		    followed = false
-			@followees.each do |followee|
-			    #if other_user is a followee of you, followed is true
-				if potential_recommendation.id == followee.user_id
-					followed = true
-				end
-				#if potential_recommendation is already in recommendations, followed is true
-				@recommended.each do |rec|
-				    if potential_recommendation.id == rec.id
-				        followed = true
-				    end
-			    end
-			end	
-			#if you don't follow other_user yet, push to recommended
-			if followed == false  
-			    @recommended.push(potential_recommendation)
-			    num_recommendations += 1
-			end				
-		end
-		return @recommended
+	    #pull out ten random users to suggest be followed
+	    candidates = User.limit(10).order("RANDOM()")
 	end
-
+	    
 end

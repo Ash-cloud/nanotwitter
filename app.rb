@@ -134,8 +134,7 @@ get '/redirect_login' do
 	       	session[:user_name]=@user_name
 		session[:user_id]=User.find_by(user_name: @user_name).id #db call
 		session[:log_status]=true
-		#redirect '/loggedin_root'
-		redirect '/empty'
+		redirect '/loggedin_root'
 	else
 		redirect '/login'
 	end

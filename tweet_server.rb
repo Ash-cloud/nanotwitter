@@ -12,7 +12,8 @@ class Tweet_Service
 	end
 
 	def self.getRecentTweets()
-		tweets = Tweet.all.order(created_at: "DESC").take(100)
+		#tweets = Tweet.all.order(created_at: "DESC").take(100)
+		tweets = Tweet.limit(20).order('created_at desc')
 		if tweets
 			return tweets
 		else
@@ -29,7 +30,8 @@ class Tweet_Service
 	end
 
 	def self.get_stream(user_id)
-		tweets = Tweet.where(user_id:user_id).order(created_at: "DESC").take(100)
+		#tweets = Tweet.where(user_id:user_id).order(created_at: "DESC").take(100)
+		tweets = Tweet.where(user_id:user_id).limit(20).order('created_at desc')
 		return tweets
 	end
 

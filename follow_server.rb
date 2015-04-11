@@ -17,7 +17,7 @@ class Follow_Service
 	end
 
 	def self.unfollow(follower_id, followee_id)
-		follow = Follow.where(user_id: followee_id, follower: follower_id)
+		follow = Follow.find_by(user_id: followee_id, follower: follower_id)
 		Follow.delete(follow)
 	end
 
@@ -30,7 +30,8 @@ class Follow_Service
 
 	def self.followed?(followee_id,follower_id)
 		puts 'followee',followee_id,'follower',follower_id
-		followed_record=Follow.where(user_id:followee_id).find_by(follower: follower_id)
+		#followed_record=Follow.where(user_id:followee_id).find_by(follower: follower_id)
+		followed_record = Follow.find_by(user_id:followee_id, follower: follower_id)
 		if followed_record
 			return true
 		else
