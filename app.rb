@@ -115,16 +115,16 @@ post '/follow' do
 	@follower_id=params[:follower_id]
 	Follow_Service.follow(@follower_id,@followee_id)
 	TweetUser_Service.add_old_tweets(@follower_id,@followee_id)
-	#redirect back
-	redirect '/empty'
+	redirect back
+	#redirect '/empty'
 end
 post '/unfollow' do
 	@followee_id=params[:followee_id]
 	@follower_id=params[:follower_id]
 	Follow_Service.unfollow(@follower_id,@followee_id)
 	TweetUser_Service.delete_old_tweets(@follower_id,@followee_id)
-	#redirect back
-	redirect '/empty'
+	redirect back
+	#redirect '/empty'
 
 end
 #check if user could login or not

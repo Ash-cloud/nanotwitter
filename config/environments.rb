@@ -10,7 +10,7 @@ configure :production do
 			:password => db.password,
 			:database => db.path[1..-1],
 			:encoding => 'utf8',
-			:reaping_frequency => 10
+			:reaping_frequency => 5
 	)
 end
 
