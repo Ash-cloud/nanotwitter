@@ -1,5 +1,5 @@
 class Index < ActiveRecord::Migration
     def change
-    	add_index(:tweets, :user_id)	    
+    	add_index(:tweets, :create_at)	    
     end
 end
