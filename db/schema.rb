@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 13) do
+ActiveRecord::Schema.define(version: 17) do
 
   create_table "follows", force: :cascade do |t|
     t.integer "user_id"
@@ -43,5 +43,7 @@ ActiveRecord::Schema.define(version: 13) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "users", ["user_name"], name: "index_users_on_user_name"
 
 end
