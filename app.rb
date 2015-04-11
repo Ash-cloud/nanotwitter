@@ -12,7 +12,7 @@ enable :sessions
 configure :production do
   require 'newrelic_rpm'
 end
-
+after { ActiveRecord::Base.connection.close }
 #loadio code for TA
 get '/loaderio-ceac0dc59fc5754aa4affe8ba2bf6242/' do
   "loaderio-ceac0dc59fc5754aa4affe8ba2bf6242"
