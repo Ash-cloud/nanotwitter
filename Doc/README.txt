@@ -13,4 +13,4 @@ Nano Twitter V0.4 Modification Log
 
 - Add some script to generate payload file for load.io to send different request when doing test
 
-- Improved the API performance by replacing ‘where’ by ‘find_by’.
+- Improved the API performance by removing .all.
