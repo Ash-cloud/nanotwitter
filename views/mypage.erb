@@ -62,9 +62,7 @@ Followed number<br>
 <h2>Tweet area</h2>
 <p>
 <form action="tweet" method="POST"> <!--Update the tweets through methods in /tweet-->
-	<textarea name="tweet_content" placeholder = "Post a tweet here" cols=80 rows=5/>
-		
-	</textarea>
+	<textarea name="tweet_content" placeholder = "Post a tweet here" maxlength="140" cols=80 rows=5/></textarea>
 	<br/>
 	<br/>
 	<input type="submit" value="Post Tweet" style="width:100px"/>
