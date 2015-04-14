@@ -7,7 +7,7 @@ require_relative 'user_server'
 require_relative 'follow_server'
 require_relative 'tweet_user_server'
 
-
+ActiveRecord::Base.logger=Logger.new(STDOUT)
 enable :sessions
 configure :production do
   require 'newrelic_rpm'
