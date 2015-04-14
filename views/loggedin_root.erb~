@@ -59,8 +59,7 @@ Followed number<br>
 <h2>Tweet area</h2>
 <p>
 <form action="/tweet" method="POST"> <!--Update the tweets through methods in /tweet-->
-	<textarea name="tweet_content" placeholder="post a tweet here" cols=80 rows=5/>
-	</textarea>
+	<textarea name="tweet_content" placeholder="post a tweet here" maxlength="140" cols=80 rows=5></textarea>
 	<br/>
 	<br/>
 	<input type="submit" value="Post Tweet" style="width:100px"/>
@@ -69,9 +68,9 @@ Followed number<br>
 </p>
 <% @tweets.each do |tweet| %>
  	<% @user_id= tweet.user_id %>
- 	<% user = User.find_by(id: @user_id)%>
- 	<% user_name = user.user_name%>
-	<p><a href="/user_page?user_id=<%= @user_id %>"> <%= user_name %> </a>
+ 	<% #user = User.find_by(id: @user_id)%>
+ 	<% #user_name = user.user_name%>
+	<p><a href="/user_page?user_id=<%= @user_id %>"> <%= user_id %> </a>
 	<% diff = (Time.now - tweet.created_at).to_i %>
  		<% if diff < 60 %>	
 			<%= diff %>s ago </p>
@@ -88,7 +87,7 @@ Followed number<br>
 
 </div>
 <div id="section">
-<h2 align = "right"> Follow?</h2>
+<h2 align = "right"> Follow Me</h2>
 <p>
 
 <% @recommendations.each do |potential_followee| %>

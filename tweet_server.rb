@@ -13,7 +13,7 @@ class Tweet_Service
 
 	def self.getRecentTweets()
 		#tweets = Tweet.all.order(created_at: "DESC").take(100)
-		tweets = Tweet.limit(20).order('created_at desc')
+		tweets = Tweet.limit(100).order('created_at desc')
 		if tweets
 			return tweets
 		else

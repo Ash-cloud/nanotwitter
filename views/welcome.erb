@@ -54,9 +54,9 @@
 <center><b>Most Recent Tweets</b></center>
 <% @tweets.each do |tweet| %>
 	<% @user_id= tweet.user_id %>
- 	<% user = User.find_by(id: @user_id)%>
- 	<% user_name = user.user_name%>
-	<p><center><a href="/user_page?user_id=<%= @user_id %>"> <%= user_name %> </a>
+ 	<% #user = User.find_by(id: @user_id)%>
+ 	<% #user_name = user.user_name%>
+	<p><center><a href="/user_page?user_id=<%= @user_id %>"> <%= @user_id %> </a>
 	<% diff = (Time.now - tweet.created_at).to_i %>
  		<% if diff < 60 %>	
 			<%= diff %>s ago </center></p>
