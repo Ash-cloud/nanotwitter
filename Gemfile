@@ -5,6 +5,7 @@ gem 'newrelic_rpm'
 
 group :production,:development do
   gem "pg"
+  gem 'thin'
 end
 group :test do
   gem 'sqlite3'
