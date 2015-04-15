@@ -2,7 +2,7 @@ gem "sinatra"
 gem "activerecord"
 gem "sinatra-activerecord"
 gem 'newrelic_rpm'
-
+gem 'actionview'
 group :production,:development do
   gem "pg"
   gem 'thin'
