@@ -53,10 +53,10 @@ get '/user_page' do
 	end
 end
 get '/login_payload' do
-	erb :login_payload
+	erb :login_payload, layout:false
 end
 get '/follow_payload' do 
-	erb :follow_payload
+	erb :follow_payload, layout:false
 end
 # Show the stream: all the tweet have posted by that pageowner
 get '/mypage' do  #Refract Done
