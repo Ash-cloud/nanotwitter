@@ -1,5 +1,7 @@
 require './models/tweet'
+require 'action_view'
 
+include ActionView::Helpers::DateHelper
 class Tweet_Service
 
 	def self.getTweetsByID(tweet_id)
@@ -10,10 +12,28 @@ class Tweet_Service
 			return nil
 		end
 	end
+	#Tweet is an array with length 3, this methods are provided to incapsulate the array
+	def self.Tweet_user_name(tweet)
+		return tweet[0]
+	end
+	
+	def self.Tweet_text(tweet)
+		return tweet[1]
+	end
+
+	def self.Tweet_create_time(tweet)
+		return tweet[2]
+	end
+
+	#using DataHelper to generate the describition of time
+	def self.create_time_interval(created_time)
+		from_time = Time.now
+		distance_of_time_in_words(from_time,created_time) 
+	end
 
 	def self.getRecentTweets()
-		#tweets = Tweet.all.order(created_at: "DESC").take(100)
-		tweets = Tweet.limit(100).order('created_at desc')
+		tweets =Tweet.limit(100).order("tweets.created_at desc").joins("LEFT JOIN users ON tweets.user_id = users.id").pluck(:user_name,:text,:created_at)
+
 		if tweets
 			return tweets
 		else

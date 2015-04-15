@@ -52,22 +52,13 @@
 </form>
 
 <center><b>Most Recent Tweets</b></center>
-<% @tweets.each do |tweet| %>
-	<% @user_id= tweet.user_id %>
- 	<% #user = User.find_by(id: @user_id)%>
- 	<% #user_name = user.user_name%>
-	<p><center><a href="/user_page?user_id=<%= @user_id %>"> <%= @user_id %> </a>
-	<% diff = (Time.now - tweet.created_at).to_i %>
- 		<% if diff < 60 %>	
-			<%= diff %>s ago </center></p>
-		<% elsif diff >= 60 && diff < 3600 %>
-			<%= (diff / 60).to_i %>m ago</center></p>
-		<% elsif diff >= 3600 && diff < 86400 %>
-			<%= (diff / 3600).to_i %>h ago</center></p>
-		<% else  %>
-			<%= (diff / 86400).to_i %>d ago</center></p>
-		<% end %>
-	<center><%= tweet.text%></center>
+<% @user_name_array.zip(@text_array,@created_time_array) do |tweet| %>
+	<% user_name= tweet[0] %>
+ 	<% text= tweet[1]%>
+ 	<% time= tweet[2] %>
+	<p><center><a href="/user_page?user_id=<%= @user_id %>"> <%= user_name %> </a>
+	<%= time %>
+	<center><%= text%></center>
 	<br/>
 <% end %>
 </body>

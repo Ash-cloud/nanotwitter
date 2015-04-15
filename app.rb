@@ -15,12 +15,16 @@ end
 #after { ActiveRecord::Base.connection.close }
 #loadio code for TA
 get '/loaderio-ceac0dc59fc5754aa4affe8ba2bf6242/' do
-  "loaderio-ceac0dc59fc5754aa4affe8ba2bf6242"
+	"loaderio-ceac0dc59fc5754aa4affe8ba2bf6242"
 end
 
-#loadio code for us
+#loadio code for andy
 get '/loaderio-2c5b20f8cbc30dfc026cc8d80ceb4a67/' do
-    erb :loader
+	erb :loader
+end
+#loadio code for jinfeng lin
+get '/loaderio-e0344b47614f74b76ef47efc30256a34' do
+	"loaderio-e0344b47614f74b76ef47efc30256a34"
 end
 
 #welcome page
@@ -28,7 +32,18 @@ get '/' do
 	if session[:log_status]==true
 		redirect '/loggedin_root'
 	else 
-		@tweets = Tweet_Service.getRecentTweets()
+		tweets = Tweet_Service.getRecentTweets()#tweets now are array!!	
+		#split 3 attributes into sperate array
+		#We split here because because we don't want require api file in erb
+
+		@user_name_array=[]
+		@created_time_array=[]
+		@text_array=[]
+		tweets.map{|tweet|
+			@user_name_array.push Tweet_Service.Tweet_user_name(tweet)
+			@created_time_array.push Tweet_Service.create_time_interval(Tweet_Service.Tweet_create_time(tweet))
+			@text_array.push Tweet_Service.Tweet_text(tweet)
+		}
 		erb :welcome
 	end
 end
@@ -37,6 +52,7 @@ end
 #if user is logged in and user_id in session is equal to parameter, then show mypage(visiting his/her own page)
 #if user is logged in while user_id in session are different from what in parameter, show loggedin usrepage (visiting other people's page)
 #if user is unlogged in then the page shows will be slightly different from the second situation(no follow and unfollow, login/register button)
+
 get '/user_page' do
     #@page_owner_id = session[:owner_id]
 	@page_owner_id=params[:user_id]
