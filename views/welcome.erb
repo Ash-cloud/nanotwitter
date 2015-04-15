@@ -1,65 +1,23 @@
 <html>
-<head>
-<style>
-#header {
-    background-color:black;
-    color:white;
-    text-align:center;
-    padding:5px;
-}
-#nav {
-    line-height:30px;
-    background-color:#eeeeee;
-    height:300px;
-    width:100px;
-    float:left;
-    padding:5px;	      
-}
-#section {
-    width:350px;
-    float:left;
-    padding:10px;	 	 
-}
-#footer {
-    background-color:black;
-    color:white;
-    clear:both;
-    text-align:center;
-   padding:5px;	 	 
-}
-</style>
-</head>
-<body>
-
-<div id="header">
-<h1>Welcome to NanoTwitter!</h1>
-<h4> brought to you by AshCloud<br> Andy Alexander, Mark Capobianco, Jinfeng Lin, Ruoyun Song</h4>
-</div>
-
-
-<form action="/login" method="GET">
-<p><center>To use NanoTwitter, login or register for a new account</center></p>
-<p>Login:</p>
-<input type="submit" value="Go To Login">
-</form>
-<p>Register:</p>
-<form action="/register" method="GET">
-<!--<button name = "button" type "button">
-    <strong>Register</strong>
-    </button>-->
-<input type="submit" value="Go To Register"> 
-
-</form>
-
-<center><b>Most Recent Tweets</b></center>
-<% @user_name_array.zip(@text_array,@created_time_array) do |tweet| %>
-	<% user_name= tweet[0] %>
- 	<% text= tweet[1]%>
- 	<% time= tweet[2] %>
-	<p><center><a href="/user_page?user_id=<%= @user_id %>"> <%= user_name %> </a>
-	<%= time %>
-	<center><%= text%></center>
-	<br/>
-<% end %>
-</body>
+	<head>
+	</head>
+	<body>
+		<div style="width: 1%; float:left;position: absolute;">
+			<form action="/login" method="GET">
+				<p>Login:</p>
+				<input type="submit" value="Go To Login">
+			</form>
+			
+			<form action="/register" method="GET">
+				<p>Register:</p>
+				<input type="submit" value="Go To Register"> 
+			</form>
+		</div>
+		<div id="tweets">
+		<p><center>To use NanoTwitter, login or register for a new account</center></p>
+		<%= erb :'parts/_show_tweets.html' %>
+		</div>
+		</br>
+		<center><b>Srcoll down to Refresh</b></center>
+	</body>
 </html>

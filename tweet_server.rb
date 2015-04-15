@@ -51,7 +51,7 @@ class Tweet_Service
 
 	def self.get_stream(user_id)
 		#tweets = Tweet.where(user_id:user_id).order(created_at: "DESC").take(100)
-		tweets = Tweet.where(user_id:user_id).limit(20).order('created_at desc')
+		tweets = Tweet.where(user_id:user_id).limit(100).order('tweets.created_at desc').joins("LEFT JOIN users ON tweets.user_id = users.id").pluck(:user_name,:text,:created_at)
 		return tweets
 	end
 

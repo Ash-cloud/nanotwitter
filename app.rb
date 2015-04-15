@@ -8,6 +8,7 @@ require_relative 'follow_server'
 require_relative 'tweet_user_server'
 
 ActiveRecord::Base.logger=Logger.new(STDOUT)
+
 enable :sessions
 configure :production do
   require 'newrelic_rpm'
@@ -26,7 +27,6 @@ end
 get '/loaderio-e0344b47614f74b76ef47efc30256a34/' do
 	"loaderio-e0344b47614f74b76ef47efc30256a34"
 end
-
 #welcome page
 get '/' do
 	if session[:log_status]==true
