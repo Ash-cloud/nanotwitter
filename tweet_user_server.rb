@@ -20,8 +20,6 @@ class TweetUser_Service
 	
 	def self.delete_old_tweets(follower_id,unfollowing_id)
 	    TweetUser.where(creator_id: unfollowing_id, user_id: follower_id).delete_all
-	    
-	    
 	end
 	
 

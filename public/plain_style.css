@@ -7,13 +7,14 @@
 #nav {
     line-height:30px;
     background-color:#eeeeee;
-    height:300px;
-    width:100px;
+    height:100%;
+    width:15%;
     float:left;
     padding:5px;	      
 }
 #section {
-    width:350px;
+	text-align:center;
+    width:80%;
     float:left;
     padding:10px;	 	 
 }
@@ -29,6 +30,18 @@
 }
 #tweets {
 	height:500px;
-	overflow-y: scroll;
-	
+	overflow-y: scroll;	
+}
+
+#float_right{
+	width: 10%; 
+	float: right;
+	position: absolute;
+	right: 100px;
+    top: 300px;
+}
+#float_left{
+	width: 10%; 
+	float:left;
+	position: absolute;
 }

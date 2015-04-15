@@ -39,6 +39,14 @@ Nano Twitter V0.4 Modification Log
 - Revise bugs
 	Bug description: 
 		- Click on tweet box, there will have default indention and the light gray string “post tweet here” could not be shown appropriately. 
-- Modified test to support new API interface. The output of API Tweet_Service.getRecentTweets is changed from a activeRelation to ruby array with 3 attribute standing for user_name,text,time in word.
+- Modified test to support new API interface
+ 	- The output of API Tweet_Service.getRecentTweets is changed from a activeRelation to ruby array with 3 attribute standing for user_name,text,time in word.
+	- The output of API Tweet_Service.get_stream is array now
+	- Add function to split the tweet array into 3 arrays of attributes.
+	- Modify User_Service.Timeline method to generate new formate tweets.
+
+- Using template in erb
 
 -Add layout file, showing header and footer
+
+-Moved profile button to navigator in my page

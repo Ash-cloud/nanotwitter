@@ -24,6 +24,22 @@ class Tweet_Service
 	def self.Tweet_create_time(tweet)
 		return tweet[2]
 	end
+	
+	
+	#split 3 attributes into sperate array
+	#We split here because because we don't want require api file in erb
+	def self.create_Tweets_attribute_arrays(tweets)
+		user_name_array=[]
+		created_time_array=[]
+		text_array=[]
+		tweets.map{|tweet|
+			user_name_array.push Tweet_Service.Tweet_user_name(tweet)
+			created_time_array.push Tweet_Service.create_time_interval(Tweet_Service.Tweet_create_time(tweet))
+			text_array.push Tweet_Service.Tweet_text(tweet)
+		}
+		return user_name_array,created_time_array,text_array
+
+	end
 
 	#using DataHelper to generate the describition of time
 	def self.create_time_interval(created_time)

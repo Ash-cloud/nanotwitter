@@ -28,22 +28,12 @@ get '/loaderio-e0344b47614f74b76ef47efc30256a34/' do
 	"loaderio-e0344b47614f74b76ef47efc30256a34"
 end
 #welcome page
-get '/' do
+get '/' do   #Refracting Done
 	if session[:log_status]==true
 		redirect '/loggedin_root'
 	else 
 		tweets = Tweet_Service.getRecentTweets()#tweets now are array!!	
-		#split 3 attributes into sperate array
-		#We split here because because we don't want require api file in erb
-
-		@user_name_array=[]
-		@created_time_array=[]
-		@text_array=[]
-		tweets.map{|tweet|
-			@user_name_array.push Tweet_Service.Tweet_user_name(tweet)
-			@created_time_array.push Tweet_Service.create_time_interval(Tweet_Service.Tweet_create_time(tweet))
-			@text_array.push Tweet_Service.Tweet_text(tweet)
-		}
+		@user_name_array,@created_time_array,@text_array= Tweet_Service.create_Tweets_attribute_arrays(tweets)
 		erb :welcome
 	end
 end
@@ -69,17 +59,18 @@ get '/follow_payload' do
 	erb :follow_payload
 end
 # Show the stream: all the tweet have posted by that pageowner
-get '/mypage' do
-	@tweets=Tweet_Service.get_stream(session[:user_id])
+get '/mypage' do  #Refract Done
+	tweets=Tweet_Service.get_stream(session[:user_id])
+	@user_name_array,@created_time_array,@text_array= Tweet_Service.create_Tweets_attribute_arrays(tweets)
 	erb :mypage
 end
 
 #Create timeline and give recommendations for user to follow
 get '/loggedin_root' do
-	@tweets=User_Service.timeline(session[:user_id])
+	@user_name_array,@created_time_array,@text_array=User_Service.timeline(session[:user_id])
+
 	@recommendations=User_Service.get_users_to_follow(session[:user_id])
-	#@recommendations = []
-	erb :loggedin_root, :locals => {'recommendations' => @recommendations}
+	erb :loggedin_root
 end
 
 #Viwing other people's page see what they have posted and do follow and unfollow action
@@ -87,7 +78,7 @@ get '/show_userpage' do
 	puts 'in show user page'
 	@user_id=session[:user_id]
 	@owner_id=params[:owner_id] #was params
-	@tweets=Tweet_Service.get_stream(params[:owner_id])
+	@tweets=Tweet_Service.get_stream(params[:owner_id])#tweets now are arrays
 	@owner_name=User.find_by(id:params[:owner_id]).user_name #db call
 	@log_status=session[:log_status]
 	@followed_flag=Follow_Service.followed?(@owner_id,@user_id)
