@@ -6,10 +6,10 @@ class User_Service
 
 	def self.login(user_name,password)
 		puts 'in login'
-		@user=User.find_by(user_name: user_name)
-		if @user #if that user exist, check the password
-			if @user.password==password
-				return 'logged_in'
+		user=User.find_by(user_name: user_name)
+		if user #if that user exist, check the password
+			if user.password==password
+				return 'logged_in',user.id
 			else
 				return 'wrong password'
 			end
@@ -79,8 +79,8 @@ class User_Service
 		end
 	end
     #now this method generates 10 recommendations at random (of users not yet followed)
-	def self.get_users_to_follow(user_id)
-	    #pull out ten random users to suggest be followed
+	
+	def self.get_users_to_follow() 
 	    candidates = User.limit(10).order("RANDOM()")
 	end
 	    

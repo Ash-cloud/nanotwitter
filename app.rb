@@ -69,7 +69,7 @@ end
 get '/loggedin_root' do
 	@user_name_array,@created_time_array,@text_array=User_Service.timeline(session[:user_id])
 
-	@recommendations=User_Service.get_users_to_follow(session[:user_id])
+	@recommendations=User_Service.get_users_to_follow().pluck(:id,:user_name)#0->id,1->user_name
 	erb :loggedin_root
 end
 
@@ -139,10 +139,10 @@ end
 get '/redirect_login' do
 	@user_name=params[:user_name]
 	@password=params[:password]
-	response=User_Service.login(@user_name,@password)
+	response,id=User_Service.login(@user_name,@password)
 	if response=='logged_in'
 	       	session[:user_name]=@user_name
-		session[:user_id]=User.find_by(user_name: @user_name).id #db call
+		session[:user_id]=id
 		session[:log_status]=true
 		redirect '/loggedin_root'
 	else
