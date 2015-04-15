@@ -80,7 +80,7 @@ describe "server" do
     #was altered to return 100 most recent tweets instead of taking in a number
     it "should return most recent tweets for this test case " do
         response = Tweet_Service.getRecentTweets()
-        response.first.text.should == "the cake is very delicious"
+        Tweet_Service.Tweet_text(response[0]) == "the cake is very delicious"
         
     end
     
