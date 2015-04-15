@@ -22,7 +22,7 @@ describe "server" do
     it "should login with correct name and password" do
         User.create(user_name:'alf',password:'123',email:'alf@brandeis')
         status = User_Service.login('alf','123')
-        status.should == 'logged_in'
+        status[0].should == 'logged_in'
     end
     
     it "should not login with incorrect password" do
