@@ -1,9 +1,10 @@
 <center><b>Most Recent Tweets</b></center>
-<% @user_name_array.zip(@text_array,@created_time_array) do |tweet| %>
-	<% user_name= tweet[0] %>
- 	<% text= tweet[1]%>
- 	<% time= tweet[2] %>
-	<p><center><a href="/user_page?user_id=<%= @user_id %>"> <%= user_name %> </a>
+<% @user_id_array.zip(@user_name_array,@text_array,@created_time_array) do |tweet| %>
+	<% user_id=tweet[0]%>
+	<% user_name= tweet[1] %>
+ 	<% text= tweet[2]%>
+ 	<% time= tweet[3] %>
+	<p><center><a href="/user_page?user_id=<%= user_id %>"> <%= user_name %> </a>
 	<%= time %>
 	<center><%= text%></center>
 	<br/>

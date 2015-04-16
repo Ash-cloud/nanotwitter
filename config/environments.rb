@@ -9,8 +9,8 @@ configure :production do
 			:username => db.user,
 			:password => db.password,
 			:database => db.path[1..-1],
-			:encoding => 'utf8',
-			:reaping_frequency => 10
+			:encoding => 'utf8'
+			
 	)
 end
 

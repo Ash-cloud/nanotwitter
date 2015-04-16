@@ -33,7 +33,7 @@ get '/' do   #Refracting Done
 		redirect '/loggedin_root'
 	else 
 		tweets = Tweet_Service.getRecentTweets()#tweets now are array!!	
-		@user_name_array,@created_time_array,@text_array= Tweet_Service.create_Tweets_attribute_arrays(tweets)
+		@user_id_array,@user_name_array,@created_time_array,@text_array= Tweet_Service.create_Tweets_attribute_arrays(tweets)
 		erb :welcome
 	end
 end
@@ -44,8 +44,7 @@ end
 #if user is unlogged in then the page shows will be slightly different from the second situation(no follow and unfollow, login/register button)
 
 get '/user_page' do
-    #@page_owner_id = session[:owner_id]
-	@page_owner_id=params[:user_id]
+    	@page_owner_id=params[:user_id]
 	if @page_owner_id.to_s==session[:user_id].to_s #logged in and is the owner, show mypage.erb
 		redirect '/mypage'
 	else #session[:log_status] #logged in while not the owner, will have follow and unfollow button
@@ -61,15 +60,14 @@ end
 # Show the stream: all the tweet have posted by that pageowner
 get '/mypage' do  #Refract Done
 	tweets=Tweet_Service.get_stream(session[:user_id])
-	@user_name_array,@created_time_array,@text_array= Tweet_Service.create_Tweets_attribute_arrays(tweets)
+	@user_id_array,@user_name_array,@created_time_array,@text_array= Tweet_Service.create_Tweets_attribute_arrays(tweets)
 	erb :mypage
 end
 
 #Create timeline and give recommendations for user to follow
 get '/loggedin_root' do
-	@user_name_array,@created_time_array,@text_array=User_Service.timeline(session[:user_id])
-
-	@recommendations=User_Service.get_users_to_follow().pluck(:id,:user_name)#0->id,1->user_name
+	@user_id_array,@user_name_array,@created_time_array,@text_array=User_Service.timeline(session[:user_id])
+	@recommendations=User_Service.get_users_to_follow().pluck(:id,:user_name)#0->id,1->username
 	erb :loggedin_root
 end
 
@@ -78,8 +76,9 @@ get '/show_userpage' do
 	puts 'in show user page'
 	@user_id=session[:user_id]
 	@owner_id=params[:owner_id] #was params
-	@tweets=Tweet_Service.get_stream(params[:owner_id])#tweets now are arrays
-	@owner_name=User.find_by(id:params[:owner_id]).user_name #db call
+	tweets=Tweet_Service.get_stream(params[:owner_id])#tweets now are arrays
+	@user_id_array,@user_name_array,@created_time_array,@text_array= Tweet_Service.create_Tweets_attribute_arrays(tweets)
+	@owner_name=@user_name_array[0]
 	@log_status=session[:log_status]
 	@followed_flag=Follow_Service.followed?(@owner_id,@user_id)
 	erb :show_userpage
