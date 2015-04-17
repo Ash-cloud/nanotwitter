@@ -5,7 +5,7 @@ require './config/environments'
 require_relative 'tweet_server'
 require_relative 'user_server'
 require_relative 'follow_server'
-require_relative 'tweet_user_server'
+#require_relative 'tweet_user_server'
 
 ActiveRecord::Base.logger=Logger.new(STDOUT)
 
@@ -66,8 +66,11 @@ end
 
 #Create timeline and give recommendations for user to follow
 get '/loggedin_root' do
-	@user_id_array,@user_name_array,@created_time_array,@text_array=User_Service.timeline(session[:user_id])
-	@recommendations=User_Service.get_users_to_follow().pluck(:id,:user_name)#0->id,1->username
+	
+	tweets=Tweet_Service.timeline(session[:user_id])
+	             @user_id_array,@user_name_array,@created_time_array,@text_array=Tweet_Service.create_Tweets_attribute_arrays(tweets)
+    @recommendations=User_Service.get_users_to_follow().pluck(:id,:user_name)#0->id,1->username
+    
 	erb :loggedin_root
 end
 
@@ -78,7 +81,7 @@ get '/show_userpage' do
 	@owner_id=params[:owner_id] #was params
 	tweets=Tweet_Service.get_stream(params[:owner_id])#tweets now are arrays
 	@user_id_array,@user_name_array,@created_time_array,@text_array= Tweet_Service.create_Tweets_attribute_arrays(tweets)
-	@owner_name=@user_name_array[0]
+	@owner_name=User.find_by(id:@owner_id).user_name
 	@log_status=session[:log_status]
 	@followed_flag=Follow_Service.followed?(@owner_id,@user_id)
 	erb :show_userpage
@@ -121,7 +124,7 @@ post '/follow' do
 	@followee_id=params[:followee_id]
 	@follower_id=params[:follower_id]
 	Follow_Service.follow(@follower_id,@followee_id)
-	TweetUser_Service.add_old_tweets(@follower_id,@followee_id)
+	#TweetUser_Service.add_old_tweets(@follower_id,@followee_id)
 	redirect back
 	#redirect '/empty'
 end
@@ -129,7 +132,7 @@ post '/unfollow' do
 	@followee_id=params[:followee_id]
 	@follower_id=params[:follower_id]
 	Follow_Service.unfollow(@follower_id,@followee_id)
-	TweetUser_Service.delete_old_tweets(@follower_id,@followee_id)
+	#TweetUser_Service.delete_old_tweets(@follower_id,@followee_id)
 	redirect back
 	#redirect '/empty'
 
@@ -337,18 +340,19 @@ post '/tweet' do
 	@user_id=session[:user_id]
 	@sent_from=params[:path]
 
-	tweet = Tweet_Service.post_tweet(@text,@user_id)
+	#tweet = 
+	Tweet_Service.post_tweet(@text,@user_id)
 
-	@tweet_id= tweet[:id]
+	#@tweet_id= tweet[:id]
 
-	TweetUser_Service.post_tweet_user(@user_id,@tweet_id,@user_id) 
+	#TweetUser_Service.post_tweet_user(@user_id,@tweet_id,@user_id) 
 
-	followers = Follow_Service.get_followers(@user_id)
+	#followers = Follow_Service.get_followers(@user_id)
 
-	followers.each do |follower|
+	#followers.each do |follower|
 
-		TweetUser_Service.post_tweet_user(follower[:follower],@tweet_id,@user_id)	
-	end
+		#TweetUser_Service.post_tweet_user(follower[:follower],@tweet_id,@user_id)	
+	#end
 
 	if @sent_from == '/loggedin_root'
 		redirect '/loggedin_root'

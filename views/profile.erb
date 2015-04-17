@@ -28,8 +28,10 @@
       <%users_followed.each do |followee|%>
         <%followee_user = User.find_by(id:followee.user_id)%>
         <%name_of_followee = followee_user.user_name%>
-        <%followee_user_id = followee_user.id%>
-      <p><center><a href="/user_page?user_id=<%=followee_user_id %>"> <%= name_of_followee %> </a>
+        <%if name_of_followee != user_name%>
+            <%followee_user_id = followee_user.id%>
+            <p><center><a href="/user_page?user_id=<%=followee_user_id %>"> <%= name_of_followee %> </a>
+        <%end%>
        
       </form>
       <%end%>

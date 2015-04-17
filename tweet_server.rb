@@ -46,6 +46,11 @@ class Tweet_Service
 
 	end
 
+	def self.timeline(user_id)
+		tweets=Follow.where(follower:user_id).joins("LEFT JOIN tweets ON tweets.user_id = follows.user_id").joins("LEFT JOIN users ON tweets.user_id = users.id").where("tweets.text is NOT NULL").order("tweets.created_at desc").pluck(:user_id,:user_name,:text, "tweets.created_at")
+		return tweets
+	end
+
 	#using DataHelper to generate the describition of time
 	def self.create_time_interval(created_time)
 		from_time = Time.now

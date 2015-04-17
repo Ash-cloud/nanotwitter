@@ -50,3 +50,5 @@ Nano Twitter V0.4 Modification Log
 -Add layout file, showing header and footer
 
 -Moved profile button to navigator in my page
+
+-Abandon the TweetUser table
