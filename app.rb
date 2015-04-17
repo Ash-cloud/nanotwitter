@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'sinatra/activerecord'
+require 'faker'
 #require_relative 'server'
 require './config/environments'
 require_relative 'tweet_server'
@@ -335,34 +336,24 @@ post '/api/v1/tweet' do
 end
 
 post '/tweet' do
-
 	@text=params[:tweet_content]
 	@user_id=session[:user_id]
-	@sent_from=params[:path]
-
-	#tweet = 
 	Tweet_Service.post_tweet(@text,@user_id)
+	redirect back	
+end
 
-	#@tweet_id= tweet[:id]
+get '/test_tweet' do
+	user_name="test_user"
+	user_id=User.find_by(user_name: user_name).id
+	tweet= Faker::Hacker.say_something_smart
+	Tweet_Service.post_tweet(tweet,user_id)
+end
 
-	#TweetUser_Service.post_tweet_user(@user_id,@tweet_id,@user_id) 
-
-	#followers = Follow_Service.get_followers(@user_id)
-
-	#followers.each do |follower|
-
-		#TweetUser_Service.post_tweet_user(follower[:follower],@tweet_id,@user_id)	
-	#end
-
-	if @sent_from == '/loggedin_root'
-		redirect '/loggedin_root'
-	elsif @sent_from == '/mypage'
-		redirect '/mypage'
-	else 
-		puts "You can't tweet from here"
-	end
+get '/test_follow' do
 	
+end
 
+get '/test_profile' do
 end
 
 

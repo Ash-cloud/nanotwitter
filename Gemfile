@@ -3,6 +3,7 @@ gem "activerecord"
 gem "sinatra-activerecord"
 gem 'newrelic_rpm'
 gem 'actionview'
+gem 'faker'
 group :production,:development do
   gem "pg"
   gem 'thin'
