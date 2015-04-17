@@ -50,11 +50,11 @@ describe "server" do
     it "should not register with a name that's already taken" do
         response = User_Service.register('alf','123','gordon@melmac.com')
         puts response
-        response.should == 'user_name taken'
+        response.should == 'email or user_name taken'
     end
     it "should not register with an email that's already taken" do
         response = User_Service.register('alison','555','alf@brandeis')
-        response.should == 'email taken'
+        response.should == 'email or user_name taken'
     end  
      
     #tests for getTweetsByID

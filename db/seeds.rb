@@ -2,7 +2,6 @@ require './models/user'
 require './models/tweet'
 require './models/followee'
 require 'csv'
-require './tweet_user_server'
 require './follow_server'
 
 #load data for user table
