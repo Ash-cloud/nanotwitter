@@ -21,7 +21,7 @@ end
 
 #loadio code for andy
 get '/loaderio-2c5b20f8cbc30dfc026cc8d80ceb4a67/' do
-	erb :loader
+	"loaderio-2c5b20f8cbc30dfc026cc8d80ceb4a67"
 end
 #loadio code for jinfeng lin
 get '/loaderio-e0344b47614f74b76ef47efc30256a34/' do

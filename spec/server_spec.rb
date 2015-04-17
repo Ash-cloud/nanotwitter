@@ -15,7 +15,7 @@ describe "server" do
             User.delete_all 
             Follow.delete_all
             Tweet.delete_all
-            TweetUser.delete_all 
+            #TweetUser.delete_all 
         end
     end
     #first 3 tests are for login method

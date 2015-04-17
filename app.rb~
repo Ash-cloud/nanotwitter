@@ -21,7 +21,7 @@ end
 
 #loadio code for andy
 get '/loaderio-2c5b20f8cbc30dfc026cc8d80ceb4a67/' do
-	erb :loader
+	"loaderio-2c5b20f8cbc30dfc026cc8d80ceb4a67"
 end
 #loadio code for jinfeng lin
 get '/loaderio-e0344b47614f74b76ef47efc30256a34/' do
@@ -67,15 +67,10 @@ end
 #Create timeline and give recommendations for user to follow
 get '/loggedin_root' do
 	
-	tweets=User_Service.timeline(session[:user_id])
+	tweets=Tweet_Service.timeline(session[:user_id])
 	             @user_id_array,@user_name_array,@created_time_array,@text_array=Tweet_Service.create_Tweets_attribute_arrays(tweets)
     @recommendations=User_Service.get_users_to_follow().pluck(:id,:user_name)#0->id,1->username
-    ###
-    @recommendations.each do |rec|
-        puts("potential followee user_id: #{rec[0]}")
-        puts("potential followee user_name: #{rec[1]}")
-	end
-	###
+    
 	erb :loggedin_root
 end
 
@@ -86,7 +81,7 @@ get '/show_userpage' do
 	@owner_id=params[:owner_id] #was params
 	tweets=Tweet_Service.get_stream(params[:owner_id])#tweets now are arrays
 	@user_id_array,@user_name_array,@created_time_array,@text_array= Tweet_Service.create_Tweets_attribute_arrays(tweets)
-	@owner_name=@user_name_array[0]
+	@owner_name=User.find_by(id:@owner_id).user_name
 	@log_status=session[:log_status]
 	@followed_flag=Follow_Service.followed?(@owner_id,@user_id)
 	erb :show_userpage
@@ -345,18 +340,19 @@ post '/tweet' do
 	@user_id=session[:user_id]
 	@sent_from=params[:path]
 
-	tweet = Tweet_Service.post_tweet(@text,@user_id)
+	#tweet = 
+	Tweet_Service.post_tweet(@text,@user_id)
 
-	@tweet_id= tweet[:id]
+	#@tweet_id= tweet[:id]
 
-	TweetUser_Service.post_tweet_user(@user_id,@tweet_id,@user_id) 
+	#TweetUser_Service.post_tweet_user(@user_id,@tweet_id,@user_id) 
 
-	followers = Follow_Service.get_followers(@user_id)
+	#followers = Follow_Service.get_followers(@user_id)
 
-	followers.each do |follower|
+	#followers.each do |follower|
 
-		TweetUser_Service.post_tweet_user(follower[:follower],@tweet_id,@user_id)	
-	end
+		#TweetUser_Service.post_tweet_user(follower[:follower],@tweet_id,@user_id)	
+	#end
 
 	if @sent_from == '/loggedin_root'
 		redirect '/loggedin_root'
