@@ -166,174 +166,174 @@ get '/redirect_register' do
 end
 
 #retrieves a tweet given a tweet id 
-get '/api/v1/tweet' do
-    #tweet = Tweet.find_by_id(params[:id])
-    tweet = Tweet_Service.getTweetsByID(params[:id])
+# get '/api/v1/tweet' do
+#     #tweet = Tweet.find_by_id(params[:id])
+#     tweet = Tweet_Service.getTweetsByID(params[:id])
 	
-	if tweet
-		tweet.to_json
-	else
-		error 404, {:error => "tweet not found"}.to_json
-	end
+# 	if tweet
+# 		tweet.to_json
+# 	else
+# 		error 404, {:error => "tweet not found"}.to_json
+# 	end
 
-end
+# end
 #retrieves a user given a user id
-get '/api/v1/user' do
-    #user = User.find_by_id(params[:id])
-    user = User_Service.getUserByID(params[:id])
+# get '/api/v1/user' do
+#     #user = User.find_by_id(params[:id])
+#     user = User_Service.getUserByID(params[:id])
 	
-	if user
-		user.to_json
-	else
-		error 404, {:error => "user not found"}.to_json
-	end
+# 	if user
+# 		user.to_json
+# 	else
+# 		error 404, {:error => "user not found"}.to_json
+# 	end
 
-end
+# end
 #return the most recent n tweets that were made
-get '/api/v1/tweet/recent/' do
+# get '/api/v1/tweet/recent/' do
 	
-	@number= params[:number]
-    #tweets = Tweet.all.order(created_at: "DESC").take(@number)
-	if not @number 
-		@number=30
-	end
-	puts @number
+# 	@number= params[:number]
+#     #tweets = Tweet.all.order(created_at: "DESC").take(@number)
+# 	if not @number 
+# 		@number=30
+# 	end
+# 	puts @number
     
-    tweets = Tweet.getRecentTweets(@number)
+#     tweets = Tweet.getRecentTweets(@number)
     
-	if tweets 
-		tweets.to_json
-	else
-		error 123, {:error => "not a valid number"}.to_json
-	end
-end
+# 	if tweets 
+# 		tweets.to_json
+# 	else
+# 		error 123, {:error => "not a valid number"}.to_json
+# 	end
+# end
 #return the most recent tweets of a specified user in descending order
 #they are what the user have tweeted
-get '/api/v1/users/*/tweets' do
-    #@user_id = params[:user_id]
-    @user_id = params[:splat].first.split("/")
-    tweets = Tweet_Service.where(user_id:@user_id).order(created_at: "DESC").take(100)
-    if tweets
-        tweets.to_json
-    else
-        error 404, {:error => "problems"}.to_json
-    end
-end
+# get '/api/v1/users/*/tweets' do
+#     #@user_id = params[:user_id]
+#     @user_id = params[:splat].first.split("/")
+#     tweets = Tweet_Service.where(user_id:@user_id).order(created_at: "DESC").take(100)
+#     if tweets
+#         tweets.to_json
+#     else
+#         error 404, {:error => "problems"}.to_json
+#     end
+# end
 #return a list of a given user's followers
-get '/api/v1/user/follower' do
-    @user_id = session[:user_id]
-    follows = Follow_Service.where(user_id:@user_id)
-    if follows
-        follows.to_json
-    else
-        error 404, {:error => "problems"}.to_json
-    end
-end
+# get '/api/v1/user/follower' do
+#     @user_id = session[:user_id]
+#     follows = Follow_Service.where(user_id:@user_id)
+#     if follows
+#         follows.to_json
+#     else
+#         error 404, {:error => "problems"}.to_json
+#     end
+# end
 #find a specified user's follower and return a list of that follower's
 #tweets
-get '/api/v1/user/follower/*/tweet' do
-    @user_id = session[:user_id]
-    @follower_id = params[:splat].second.split("/")
-    follow = Follow.where(user_id:@user_id,follower:@follower_id) #db call
-    if follow.length > 0 #meaning follower for that user was found
-        followers_tweets = Tweet.where(user_id:@follower_id).order(created_at:"DESC").take(100) #db call
-        followers_tweets.to_json
-    else
-        error 404, {:error => "User did not have this follower"}.to_json
-    end
+# get '/api/v1/user/follower/*/tweet' do
+#     @user_id = session[:user_id]
+#     @follower_id = params[:splat].second.split("/")
+#     follow = Follow.where(user_id:@user_id,follower:@follower_id) #db call
+#     if follow.length > 0 #meaning follower for that user was found
+#         followers_tweets = Tweet.where(user_id:@follower_id).order(created_at:"DESC").take(100) #db call
+#         followers_tweets.to_json
+#     else
+#         error 404, {:error => "User did not have this follower"}.to_json
+#     end
     
-end 
+# end 
 #change the user's password (might add other things to change later)
 #this will be a put, it's a get right now to test it
-get '/api/v1/user/*/modify' do
-    @user_id = session[:user_id]
-    @password = params[:password]
+# get '/api/v1/user/*/modify' do
+#     @user_id = session[:user_id]
+#     @password = params[:password]
     
-    user = User.find_by(id:@user_id) #db call
-    if !user
-        error 404, {:error => "User not found"}.to_json
-    else
-        if @password
-            user.update(password:@password)
-            user.to_json
-        else
-            error 404, {:error => "no password parameter"}.to_json
-        end
-    end
-end 
+#     user = User.find_by(id:@user_id) #db call
+#     if !user
+#         error 404, {:error => "User not found"}.to_json
+#     else
+#         if @password
+#             user.update(password:@password)
+#             user.to_json
+#         else
+#             error 404, {:error => "no password parameter"}.to_json
+#         end
+#     end
+# end 
 
 #follow the user_id that is given (will be a post)
-get '/api/v1/user/follow' do
-    follower_id = session[:user_id]
-    followee_id = params[:user_id]
-    followee= User.find_by(id:followee_id) #db call
-    if !followee
-        error 404, {:error => "User not found"}.to_json
-    else
-        follow = Follow.create(user_id:followee_id,follower:follower_id) #db call
-        follow.to_json
-    end
+# get '/api/v1/user/follow' do
+#     follower_id = session[:user_id]
+#     followee_id = params[:user_id]
+#     followee= User.find_by(id:followee_id) #db call
+#     if !followee
+#         error 404, {:error => "User not found"}.to_json
+#     else
+#         follow = Follow.create(user_id:followee_id,follower:follower_id) #db call
+#         follow.to_json
+#     end
 
-end       
+# end       
 #unfollow the user_id that is given
-get '/api/v1/user/unfollow' do
-    follower_id = session[:user_id]
-    followee_id = params[:user_id]
-    followee = User.find_by(id:followee_id) #db call
-    if !followee
-        error 404, {:error => "User not found"}.to_json
-    else
-        f = Follow.where(user_id:followee_id,follower:follower_id) #db call
-        Follow.delete(f) #db call
-        #not sure what this should return in terms of JSON
-    end
+# get '/api/v1/user/unfollow' do
+#     follower_id = session[:user_id]
+#     followee_id = params[:user_id]
+#     followee = User.find_by(id:followee_id) #db call
+#     if !followee
+#         error 404, {:error => "User not found"}.to_json
+#     else
+#         f = Follow.where(user_id:followee_id,follower:follower_id) #db call
+#         Follow.delete(f) #db call
+#         #not sure what this should return in terms of JSON
+#     end
     
-end     
-get '/api/v1/user/login' do
+# end     
+# get '/api/v1/user/login' do
 
-end
+# end
 
 
-post '/api/v1/user/register' do
-	begin
-		@email=params[:email]
-		@user_name=params[:user_name]
-		@pass=params[:password]
-		user = User.create(email:@email,user_name:@user_name,password:@pass) #db call
-		if user.valid?
-			user.to_json
-		else
-			error 400, user.errors.to_json 
-		end
-	rescue => e
-		error 400, e.message.to_json
-	end
-end
+# post '/api/v1/user/register' do
+# 	begin
+# 		@email=params[:email]
+# 		@user_name=params[:user_name]
+# 		@pass=params[:password]
+# 		user = User.create(email:@email,user_name:@user_name,password:@pass) #db call
+# 		if user.valid?
+# 			user.to_json
+# 		else
+# 			error 400, user.errors.to_json 
+# 		end
+# 	rescue => e
+# 		error 400, e.message.to_json
+# 	end
+# end
 
-#post a tweet, add tweet to db, add tweet to user and followers timelines
-post '/api/v1/tweet' do
-	begin
-		@text=params[:tweet_content]
-		@user_id=session[:user_id]
-		tweet = Tweet.create(text:@text,user_id:@user_id) #db call
+# post a tweet, add tweet to db, add tweet to user and followers timelines
+# post '/api/v1/tweet' do
+# 	begin
+# 		@text=params[:tweet_content]
+# 		@user_id=session[:user_id]
+# 		tweet = Tweet.create(text:@text,user_id:@user_id) #db call
 
-		@tweet_id= tweet[:id]
-		tweet_user = TweetUser.create(tweet_id:@tweet_id,user_id:@user_id) #db call
+# 		@tweet_id= tweet[:id]
+# 		tweet_user = TweetUser.create(tweet_id:@tweet_id,user_id:@user_id) #db call
 		
-		followers = Follow.where(user_id: @user_id) #db call
+# 		followers = Follow.where(user_id: @user_id) #db call
 		
-		followers.each do |follower|
+# 		followers.each do |follower|
 
-			TweetUser.create(user_id: follower[:follower], tweet_id: @tweet_id)	#db call
-		end
+# 			TweetUser.create(user_id: follower[:follower], tweet_id: @tweet_id)	#db call
+# 		end
 		
-		status 200
-	rescue => e
-		error 400, e.message.to_json
-	end
+# 		status 200
+# 	rescue => e
+# 		error 400, e.message.to_json
+# 	end
 	
 	
-end
+# end
 
 post '/tweet' do
 	@text=params[:tweet_content]
@@ -343,17 +343,34 @@ post '/tweet' do
 end
 
 get '/test_tweet' do
-	user_name="test_user"
-	user_id=User.find_by(user_name: user_name).id
+	#user_name="test_user"
+	user_id=1001
 	tweet= Faker::Hacker.say_something_smart
 	Tweet_Service.post_tweet(tweet,user_id)
 end
 
 get '/test_follow' do
+	candidate = User.limit(1).order("RANDOM()")
+	#user_id=User.find_by(user_name: "test_user").id
+	user_id=1001
+	if Follow_Service.followed?(candidates.id,user_id)
+		Follow_Service.unfollow(user_id,candidate.id)
+	else
+		Follow_Service.follow(user_id,candidate.id)
+	end
 	
 end
 
 get '/test_profile' do
+	#tweets=Tweet_Service.timeline(session[:user_id])
+	tweets=Tweet_Service.timeline(1001)
+	@user_id_array,@user_name_array,@created_time_array,@text_array=Tweet_Service.create_Tweets_attribute_arrays(tweets)
+	erb :test_profile
+
+
 end
 
-
+post '/reset' do
+    Tweet.delete_all(user_id: 1001)
+    Follow.delete_all(follower: 1001)
+end

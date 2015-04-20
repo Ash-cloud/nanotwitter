@@ -4,14 +4,11 @@
 	<% user_name= tweet[1] %>
  	<% text= tweet[2]%>
  	<% time= tweet[3] %>
- 	<center>
- 	<div class="boxed">
-	<p align="left"><strong><a href="/user_page?user_id=<%= user_id %>"> <%= user_name %> </a></strong>
-	
-	<em><%= time %></em>
-	<br/>
-	<%= text%>
-	</div></p>
+	<p><center><a href="/user_page?user_id=<%= user_id %>"> <%= user_name %> </a>
+	<%= time %>
+	<div class="boxed">
+		<%= text%>
+	</div>
 	<br/>
 <% end %>
 

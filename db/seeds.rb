@@ -14,6 +14,7 @@ file.each_line("\n") do |row|
     User_Service.register(user_name, password, email)
      
 end
+   User_Service.register("test_user",1234,'whatever')
 
 #load data for follow table
 filename = './db/follows.csv'

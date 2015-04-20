@@ -6,12 +6,13 @@
  	<% time= tweet[3] %>
  	<center>
  	<div class="boxed">
-	<p align="left"><strong><a href="/user_page?user_id=<%= user_id %>"> <%= user_name %> </a></strong>
+ 	<h1>
+	<p><center><a href="/user_page?user_id=<%= user_id %>"> <%= user_name %> </a>
 	
-	<em><%= time %></em>
-	<br/>
-	<%= text%>
-	</div></p>
+	<%= time %></center>
+	</h1>
+	<br/><%= text%>
+	</div></center>
 	<br/>
 <% end %>
 

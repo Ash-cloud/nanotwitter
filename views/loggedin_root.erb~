@@ -37,7 +37,7 @@
 				</div>
 			</div></span>
 
-			<div>
+			<div><span class = "center">
 				<div id="section">
 					<h2><center> Tweet area</center></h2>
 					<p><center>
@@ -50,7 +50,7 @@
 					<div id="tweets">
 					<%= erb :'parts/_show_tweets.html' %>
 					</div>
-				</div>
+				</div></span>
    		</div>
 	</body>
 </html>

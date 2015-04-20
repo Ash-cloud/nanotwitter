@@ -6,37 +6,37 @@
 	<body>
 		<div >
 			<form action='/logout' method="GET">
-				<input type="submit" value = "Logout" style="float: right;"/>
+				<button type="submit" class="btn btn-info pull-right ">Logout</button>
 			</form>
 			
 			<form action="/loggedin_root" method="GET">
-				<input type="submit" value = "loggedin_root" style="float: right;"/>      
+				<button type="submit" class="btn btn-info pull-right ">Home</button>     
 			</form>
 		</div>
 		
 		
 		
 		
-		<br><br>
+		
 		
 		<div id="nav">
 			Picture        <br>
 			<form action="/profile" method="GET">
-				<input type="submit" value = "Profile" style="float: left;"/>      
+				<button type="submit" class="btn btn-info ">Profile</button>      
 			</form>	<br>	  
 			Follower number<br>
 			Followed number<br>
 		</div>
 		
 		<div id="section">
-			<h2>Tweet area</h2>
-			<p>
+			<h2><center> Tweet area</center></h2>
+			<p><center>
 				<form action="tweet" method="POST"> <!--Update the tweets through methods in /tweet-->
-					<textarea name="tweet_content" placeholder = "Post a tweet here" maxlength="140" cols=80 rows=5/></textarea>
+					<textarea class="input-xxlarge" name="tweet_content" placeholder="post a tweet here" maxlength="140" cols=80 rows=5></textarea>
 					<br/><br/>
-					<input type="submit" value="Post Tweet" style="width:100px"/>
+					<button type="submit" class="btn btn-info ">Post Tweet</button>
 				</form>
-			</p>
+			</center></p>
 			<div id="tweets">
 			<%= erb :'parts/_show_tweets.html' %>
 			</div>

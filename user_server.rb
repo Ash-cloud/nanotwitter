@@ -23,6 +23,10 @@ class User_Service
 		email = @user.email
 	end
 
+	#def self.get_user_by_name(user_name)
+		#@user = User.find_by(user_name: user_name).id
+	#end
+
 	def self.register(user_name,password,email)
 		if User.where("email=? or user_name=?",email,user_name).none?
 			user = User.create(user_name: user_name,password: password, email: email)
