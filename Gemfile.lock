@@ -51,6 +51,7 @@ GEM
       rails-deprecated_sanitizer (>= 1.0.1)
     rails-html-sanitizer (1.0.2)
       loofah (~> 2.0)
+    redis (3.2.1)
     rspec (3.2.0)
       rspec-core (~> 3.2.0)
       rspec-expectations (~> 3.2.0)
@@ -91,6 +92,7 @@ DEPENDENCIES
   newrelic_rpm
   pg
   rack-test
+  redis
   rspec
   sinatra
   sinatra-activerecord
