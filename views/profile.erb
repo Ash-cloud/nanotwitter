@@ -10,13 +10,12 @@
     </style>
   </head>  
   <body>
-     <form action='/logout' method="GET">
-      <button type="submit" class="btn btn-info pull-right ">Logout</button>
-     </form>
-     
     <form action="/mypage" method="GET">
       <button type="submit" class="btn btn-info pull-right "><%=user_name%></button>
     </form>
+     <form action='/logout' method="GET">
+      <button type="submit" class="btn btn-info pull-right ">Logout</button>
+     </form>
     <h1><%=user_name%>'s Profile Page</h1>
     <br><br>
     <center><%=user_name%></center><br>

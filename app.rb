@@ -21,10 +21,12 @@ configure do
     $redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
     tweets = Tweet_Service.getRecentTweets()
     @user_id_array,@user_name_array,@created_time_array,@text_array = Tweet_Service.create_Tweets_attribute_arrays(tweets)
-    $redis.set("ids",JSON.generate(@user_id_array))
-    $redis.set("names",JSON.generate(@user_name_array))
-    $redis.set("times",JSON.generate(@created_time_array))
-    $redis.set("texts",JSON.generate(@text_array))
+    redis_pack={ids:@user_id_array,names:@user_name_array,times:@created_time_array,texts:@text_array}.to_json
+    $redis.set("100-tweets",redis_pack)
+    #$redis.set("ids",JSON.generate(@user_id_array))
+    #$redis.set("names",JSON.generate(@user_name_array))
+    #$redis.set("times",JSON.generate(@created_time_array))
+    #$redis.set("texts",JSON.generate(@text_array))
 end
 
 #after { ActiveRecord::Base.connection.close }
@@ -48,10 +50,15 @@ get '/' do   #Refactoring Done
 	else 
 		#tweets = Tweet_Service.getRecentTweets()#tweets now are array!!	
 		#@user_id_array,@user_name_array,@created_time_array,@text_array= Tweet_Service.create_Tweets_attribute_arrays(tweets)
-		@user_id_array = JSON.parse($redis.get("ids"))
-		@user_name_array = JSON.parse($redis.get("names"))
-		@created_time_array = JSON.parse($redis.get("times"))
-		@text_array = JSON.parse($redis.get("texts"))
+		#@user_id_array = JSON.parse($redis.get("ids"))
+		#@user_name_array = JSON.parse($redis.get("names"))
+		#@created_time_array = JSON.parse($redis.get("times"))
+		#@text_array = JSON.parse($redis.get("texts"))
+		redis_pack= JSON.parse($redis.get("100-tweets"))
+		@user_id_array=redis_pack["ids"]
+		@user_name_array=redis_pack["names"]
+		@created_time_array=redis_pack["times"]
+		@text_array=redis_pack["texts"]
 		erb :welcome
 	end
 end

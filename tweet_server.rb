@@ -71,25 +71,38 @@ class Tweet_Service
 		@tweet = Tweet.create(text: tweet_content,user_id: user_id)
 		
 		#need to update redis when a new tweet is created
+		redis_pack = JSON.parse($redis.get("100-tweets"))
 		new_id_array = [user_id]
-		prev_id_array = JSON.parse($redis.get("ids"))
+		#prev_id_array = JSON.parse($redis.get("ids"))
+		prev_id_array = redis_pack["ids"]
 		new_id_array = new_id_array + prev_id_array[0..98] #add most recent 99 tweet ids with newest tweet id at front
-		$redis.set("ids",JSON.generate(new_id_array)) #now put newest most recent 100 tweet ids into redis
+		#$redis.set("ids",JSON.generate(new_id_array)) #now put newest most recent 100 tweet ids into redis
+		redis_pack["ids"] = new_id_array
 		
 		new_text_array = [tweet_content]
-		prev_text_array = JSON.parse($redis.get("texts"))
+		#prev_text_array = JSON.parse($redis.get("texts"))
+		prev_text_array = redis_pack["texts"]
 		new_text_array = new_text_array + prev_text_array[0..98]
-		$redis.set("texts",JSON.generate(new_text_array))
+		#$redis.set("texts",JSON.generate(new_text_array))
+		redis_pack["texts"] = new_text_array
 		
 		new_name_array = [User.find_by(id: user_id).user_name]
-		prev_name_array = JSON.parse($redis.get("names"))
+		#prev_name_array = JSON.parse($redis.get("names"))
+		prev_name_array = redis_pack["names"]
 		new_name_array = new_name_array + prev_name_array[0..98]
-		$redis.set("names",JSON.generate(new_name_array))
+		#$redis.set("names",JSON.generate(new_name_array))
+		redis_pack["names"] = new_name_array
 		
-		new_time_array = [@tweet.created_at]
-		prev_time_array = JSON.parse($redis.get("times"))
+
+		new_time_array = [create_time_interval(@tweet.created_at)]
+
+		#prev_time_array = JSON.parse($redis.get("times"))
+		prev_time_array = redis_pack["times"]
 		new_time_array = new_time_array + prev_time_array[0..98]
-		$redis.set("times",JSON.generate(new_time_array))
+		#$redis.set("times",JSON.generate(new_time_array))
+		redis_pack["times"] = new_time_array
+		
+		$redis.set("100-tweets",JSON.generate(redis_pack))		
 		return @tweet
 	end
 
