@@ -14,6 +14,19 @@ enable :sessions
 configure :production do
   require 'newrelic_rpm'
 end
+#configuring redis cloud
+configure do
+    require 'redis'
+    uri = URI.parse("redis://rediscloud:Tm4jpeBjkvIAO2Yp@pub-redis-16637.us-east-1-2.3.ec2.garantiadata.com:16637")
+    $redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+    tweets = Tweet_Service.getRecentTweets()
+    @user_id_array,@user_name_array,@created_time_array,@text_array = Tweet_Service.create_Tweets_attribute_arrays(tweets)
+    $redis.set("ids",JSON.generate(@user_id_array))
+    $redis.set("names",JSON.generate(@user_name_array))
+    $redis.set("times",JSON.generate(@created_time_array))
+    $redis.set("texts",JSON.generate(@text_array))
+end
+
 #after { ActiveRecord::Base.connection.close }
 #loadio code for TA
 get '/loaderio-ceac0dc59fc5754aa4affe8ba2bf6242/' do
@@ -29,12 +42,16 @@ get '/loaderio-e0344b47614f74b76ef47efc30256a34/' do
 	"loaderio-e0344b47614f74b76ef47efc30256a34"
 end
 #welcome page
-get '/' do   #Refracting Done
+get '/' do   #Refactoring Done
 	if session[:log_status]==true
 		redirect '/loggedin_root'
 	else 
-		tweets = Tweet_Service.getRecentTweets()#tweets now are array!!	
-		@user_id_array,@user_name_array,@created_time_array,@text_array= Tweet_Service.create_Tweets_attribute_arrays(tweets)
+		#tweets = Tweet_Service.getRecentTweets()#tweets now are array!!	
+		#@user_id_array,@user_name_array,@created_time_array,@text_array= Tweet_Service.create_Tweets_attribute_arrays(tweets)
+		@user_id_array = JSON.parse($redis.get("ids"))
+		@user_name_array = JSON.parse($redis.get("names"))
+		@created_time_array = JSON.parse($redis.get("times"))
+		@text_array = JSON.parse($redis.get("texts"))
 		erb :welcome
 	end
 end

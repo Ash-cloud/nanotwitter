@@ -4,31 +4,27 @@
 		<title> My User Page </title>       
     </head>
 	<body>
-		<div >
-			<form action='/logout' method="GET">
-				<button type="submit" class="btn btn-info pull-right ">Logout</button>
-			</form>
-			
-			<form action="/loggedin_root" method="GET">
-				<button type="submit" class="btn btn-info pull-right ">Home</button>     
-			</form>
+	<div class="row">
+		<div class="span2">
+			<div style="margin-top:20px;" >	
+						<%@img_id=rand(1..24)%>					
+						<img src="/img/icon/<%=@img_id%>.ico" alt="icons" style="width:128px;height:128px">
+						<hr class="divider" style="color:black">
+						<form action = "/profile" method="GET">
+							<button type="submit" class="btn btn-info "style="height:35px; width:110px">profile</button> 
+						</form>
+						
+						<button class="btn btn-info" type="button" style="height:35px; width:110px">
+  							follows <span class="badge">4</span>
+						</button>
+						
+						<button class="btn btn-info" type="button" style="height:35px; width:110px; margin-top:20px">
+  							follower <span class="badge">4</span>
+						</button>
+					
+					</div>	
 		</div>
-		
-		
-		
-		
-		
-		
-		<div id="nav">
-			Picture        <br>
-			<form action="/profile" method="GET">
-				<button type="submit" class="btn btn-info ">Profile</button>      
-			</form>	<br>	  
-			Follower number<br>
-			Followed number<br>
-		</div>
-		
-		<div id="section">
+		<div class="span8">
 			<h2><center> Tweet area</center></h2>
 			<p><center>
 				<form action="tweet" method="POST"> <!--Update the tweets through methods in /tweet-->
@@ -38,8 +34,23 @@
 				</form>
 			</center></p>
 			<div id="tweets">
-			<%= erb :'parts/_show_tweets.html' %>
+				<%= erb :'parts/_show_tweets.html' %>
 			</div>
 		</div>
+		<div class="span2" style="margin-top:20px">
+			<div class="row">
+				<div class="span1">
+					<form action="/loggedin_root" method="GET">
+						<button type="submit" class="btn btn-info pull-right ">Home</button>     
+					</form>
+				</div>
+				<div class="span1">
+					<form action='/logout' method="GET">
+						<button type="submit" class="btn btn-info pull-right ">Logout</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 	</body>
 </html>

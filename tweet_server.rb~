@@ -81,7 +81,7 @@ class Tweet_Service
 		new_text_array = new_text_array + prev_text_array[0..98]
 		$redis.set("texts",JSON.generate(new_text_array))
 		
-		new_name_array = [User.find_by(id: user_id).user_name]
+		new_name_array = [User.find_by(id: user_id)]
 		prev_name_array = JSON.parse($redis.get("names"))
 		new_name_array = new_name_array + prev_name_array[0..98]
 		$redis.set("names",JSON.generate(new_name_array))

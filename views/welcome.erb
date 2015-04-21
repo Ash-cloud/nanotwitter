@@ -2,23 +2,33 @@
 	<head>
 	</head>
 	<body>
-		<div id="float_left">
-			<form action="/login" method="GET">
-				<br>
-				<p>Login:</p>
-				<button type="submit" class="btn btn-info ">Go To Login</button>
-			</form>
+		<div class="container">
+		<div class='row'>
+			<div class='span2'>
+				<div id="float_left">
+					<form action="/login" method="GET">
+						<br>
+						<p>Login:</p>
+							<button type="submit" class="btn btn-info ">Go To Login</button>
+					</form>
 			
-			<form action="/register" method="GET">
-				<p>Register:</p>
-				<button type="submit" class="btn btn-info ">Go To Register</button>
-			</form>
+					<form action="/register" method="GET">
+						<p>Register:</p>
+						<button type="submit" class="btn btn-info ">Go To Register</button>
+					</form>
+				</div>
+			</div>
+		
+			<div class="span9">
+				<p><center>To use NanoTwitter, login or register for a new account</center></p>
+				<%= erb :'parts/_show_tweets.html' %>
+			</div>
+			</br>
 		</div>
-		<div id="tweets">
-		<p><center>To use NanoTwitter, login or register for a new account</center></p>
-		<%= erb :'parts/_show_tweets.html' %>
 		</div>
-		</br>
-		<center><b>Scroll down to Refresh</b></center>
 	</body>
 </html>
+
+
+
+

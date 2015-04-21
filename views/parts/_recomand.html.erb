@@ -1,0 +1,10 @@
+<div id="float_right">
+	<h2 align = "right"> Follow Me!</h2>
+		<p>
+			<% @recommendations.each do |potential_followee| %>
+			<% @user_id= potential_followee[0] %>
+			<% @potential_followee_name = potential_followee[1]%>
+			<p align = "middle"><a href="/user_page?user_id=<%= @user_id %>"> <%= @potential_followee_name %> </a>
+			<br/>
+		<% end %>
+</div>

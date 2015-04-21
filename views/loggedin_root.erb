@@ -3,42 +3,43 @@
 	<head>
 		<title> loggedin_root </title>
 	</head>
-	
-	<form action='/logout' method="GET">
-		<button type="submit" class="btn btn-info pull-right ">Logout</button>
 
-	</form>
-	<form action="/mypage" method="GET">
-		<button type="submit" class="btn btn-info pull-right ">mypage</button>      
-	</form>
-
-
-	<div id="nav">
-		Picture<br>
-	<form action = "/profile" method="GET">
-		<button type="submit" class="btn btn-info ">profile</button> 
-	</form>
-	<br>
-	Follower number<br>
-	Followed number<br>
-	</div>
-	<div class="container">
-		<div class = "row">
-			<div><span class = "pull-right">
-				<div id="float_right">
-					<h2 align = "right"> Follow Me!</h2>
-						<p>
-						<% @recommendations.each do |potential_followee| %>
-			 			<% @user_id= potential_followee[0] %>
-			 			<% @potential_followee_name = potential_followee[1]%>
-						<p align = "right"><a href="/user_page?user_id=<%= @user_id %>"> <%= @potential_followee_name %> </a>
-						<br/>
-						<% end %>
-				</div>
-			</div></span>
-
-			<div>
-				<div id="section">
+	<body>
+		<div class="container">
+			<div class="row">
+				<div class="span2">
+					<div class="row">
+						<div class="span1">
+							<form action="/mypage" method="GET" style="margin-top:10px">
+								<button type="submit" class="btn btn-info pull-left "style="height:35px; width:85px">mypage</button>      
+							</form>
+						</div>
+					
+						<div class="span1">
+							<form action='/logout' method="GET" style="margin-top:10px">
+								<button type="submit" class="btn btn-info pull-left "style="height:35px; width:85px">Logout</button>
+							</form>
+						</div>
+					</div>
+						<hr class="divider" color="black">
+					<div style="margin-top:20px;" >						
+						<img src="/img/icon/<%=rand(24)%>.ico" alt="icons" style="width:128px;height:128px">
+						<hr class="divider" style="color:black">
+						<form action = "/profile" method="GET">
+							<button type="submit" class="btn btn-info "style="height:35px; width:110px">profile</button> 
+						</form>
+						
+						<button class="btn btn-info" type="button" style="height:35px; width:110px">
+  							follows <span class="badge">4</span>
+						</button>
+						
+						<button class="btn btn-info" type="button" style="height:35px; width:110px; margin-top:20px">
+  							follower <span class="badge">4</span>
+						</button>
+					
+					</div>		
+				</div>	
+				<div class="span8" >
 					<h2><center> Tweet area</center></h2>
 					<p><center>
 						<form action="/tweet" method="POST"> <!--Update the tweets through methods in /tweet-->
@@ -47,11 +48,15 @@
 							<button type="submit" class="btn btn-info ">Post Tweet</button>
 						</form>
 					</center></p>
+					
 					<div id="tweets">
-					<%= erb :'parts/_show_tweets.html' %>
+						<%= erb :'parts/_show_tweets.html' %>
 					</div>
 				</div>
-   		</div>
+				<div class="span2">
+					<%= erb :'parts/_recomand.html' %>
+				</div>
+			</div>
 	</body>
 </html>
 

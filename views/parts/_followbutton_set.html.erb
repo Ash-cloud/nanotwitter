@@ -1,0 +1,32 @@
+<div class="row">
+<% if @log_status %> 
+			<div class="span1">
+				<form action='/logout' method="GET">
+					<input type="submit" class="btn-info" value = "Logout"/>
+				</form>
+			</div>
+			<div class="span1">
+				<form action="/mypage" method="GET">
+					<input type="submit" value = "mypage" class="btn-info" value = "mypage"/>      
+				</form>
+			</div>
+			<% if @followed_flag %>
+				<form action='/unfollow?follower_id=<%=@user_id%>&followee_id=<%=@owner_id%>' method="POST">
+					<input type="submit" class="btn-info" value = "unfollow" style="float: right;"/>
+				</form>
+			<%else%>
+				<form action='/follow?follower_id=<%=@user_id%>&followee_id=<%=@owner_id%>' method="POST">
+					<input type="submit" class="btn-info" value = "follow" style="float: right;"/>
+				</form>
+			<%end%>
+
+			<%else%>
+				<form action='/login' method="GET">
+					<button type="submit" class="btn btn-info pull-right ">Login</button>
+				</form>
+		
+				<form action='/register' method="GET">
+					<button type="submit" class="btn btn-info pull-right ">Register</button>
+				</form>
+			<%end%>
+</div>
