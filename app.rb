@@ -405,7 +405,7 @@ get '/test_profile' do
 
 end
 
-post '/reset' do
+get '/reset' do
     Tweet.delete_all(user_id: 1001)
     Follow.delete_all(follower: 1001)
 end
