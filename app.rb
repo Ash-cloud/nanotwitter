@@ -23,10 +23,6 @@ configure do
     @user_id_array,@user_name_array,@created_time_array,@text_array = Tweet_Service.create_Tweets_attribute_arrays(tweets)
     redis_pack={ids:@user_id_array,names:@user_name_array,times:@created_time_array,texts:@text_array}.to_json
     $redis.set("100-tweets",redis_pack)
-    #$redis.set("ids",JSON.generate(@user_id_array))
-    #$redis.set("names",JSON.generate(@user_name_array))
-    #$redis.set("times",JSON.generate(@created_time_array))
-    #$redis.set("texts",JSON.generate(@text_array))
 end
 
 #after { ActiveRecord::Base.connection.close }
@@ -91,11 +87,18 @@ end
 
 #Create timeline and give recommendations for user to follow
 get '/loggedin_root' do
-	
-	tweets=Tweet_Service.timeline(session[:user_id])
-	             @user_id_array,@user_name_array,@created_time_array,@text_array=Tweet_Service.create_Tweets_attribute_arrays(tweets)
-    @recommendations=User_Service.get_users_to_follow().pluck(:id,:user_name)#0->id,1->username
-    
+	user_id = session[:user_id]
+	cached_users = JSON.parse($redis.get("cached-users"))
+	if cached_users.include?(user_id)
+		puts "here"
+		tweets = JSON.parse($redis.get(user_id))
+	else
+		tweets=Tweet_Service.timeline(session[:user_id])
+		$redis.set(user_id, JSON.generate(tweets))
+	end
+	@user_id_array,@user_name_array,@created_time_array,@text_array=Tweet_Service.create_Tweets_attribute_arrays(tweets)
+	@recommendations=User_Service.get_users_to_follow().pluck(:id,:user_name)#0->id,1->username
+
 	erb :loggedin_root
 end
 

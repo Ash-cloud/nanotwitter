@@ -67,6 +67,22 @@ class Tweet_Service
 		end
 	end
 
+
+
+
+	def self.update_redis_for_timeline(tweet,user_id)
+		f_list=Follow_Service.followers(user_id).to_a
+		c_list=JSON.parse($redis.get("cached-users"))
+		public_part=f_list&c_list
+		public_part.each do user_id
+			timeline=JSON.parse($redis.get(user_id))
+			new_tweet=[tweet.user_id,User.find_by(id: user_id).user_name,tweet.content,create_time_interval(@tweet.created_at)]
+			timeline=timeline.unshift(new_tweet)
+			timeline.pop
+			$redis.set(user_id,timeline)
+		end
+	end
+
 	def self.post_tweet(tweet_content,user_id)
 		@tweet = Tweet.create(text: tweet_content,user_id: user_id)
 		

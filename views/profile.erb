@@ -10,12 +10,22 @@
     </style>
   </head>  
   <body>
-    <form action="/mypage" method="GET">
-      <button type="submit" class="btn btn-info pull-right "><%=user_name%></button>
-    </form>
-     <form action='/logout' method="GET">
-      <button type="submit" class="btn btn-info pull-right ">Logout</button>
-     </form>
+    <div class="row">
+        <div class="span12">
+            <div class="row">
+              <div class="span1">
+                <form action="/mypage" method="GET">
+                  <button type="submit" class="btn btn-info pull-right" style="height:35px; width:85px" ><%=user_name%></button>
+                </form>
+              </div>
+              <div class="span1">
+               <form action='/logout' method="GET">
+                <button type="submit" class="btn btn-info pull-right " style="height:35px; width:85px">Logout</button>
+               </form>
+              </div>
+            </div>
+        </div>
+    </div>
     <h1><%=user_name%>'s Profile Page</h1>
     <br><br>
     <center><%=user_name%></center><br>
