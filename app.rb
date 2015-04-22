@@ -391,14 +391,14 @@ get '/test_profile' do
 	puts "cached users:#{cached_users}"
 	if $redis.exists(user_id)
 		tweets = JSON.parse($redis.get(user_id))	
-	else
-		tweets=Tweet_Service.timeline(user_id)
+	else	
+		tweets=Tweet_Service.timeline(1001)
 		cached_users.push (user_id)
 		$redis.set("cached-users",cached_users)
 		$redis.set(user_id, JSON.generate(tweets))
 	end
 
-	#tweets=Tweet_Service.timeline(1001)
+	tweets=Tweet_Service.timeline(1001)
 	@user_id_array,@user_name_array,@created_time_array,@text_array=Tweet_Service.create_Tweets_attribute_arrays(tweets)
 	erb :test_profile
 
