@@ -203,33 +203,33 @@ get '/test_tweet' do
 end
 
 get '/test_follow' do
-	candidate = User.limit(1).order("RANDOM()")
+	candidate_id = User.limit(1).order("RANDOM()").pluck(:id)
 	#user_id=User.find_by(user_name: "test_user").id
 	user_id=1001
-	if Follow_Service.followed?(candidates.id,user_id)
-		Follow_Service.unfollow(user_id,candidate.id)
+	
+	if Follow_Service.followed?(candidate_id,user_id)
+		Follow_Service.unfollow(user_id,candidate_id)
 	else
-		Follow_Service.follow(user_id,candidate.id)
+		Follow_Service.follow(user_id,candidate_id)
 	end
 	
 end
 
 get '/test_profile' do
-	#tweets=Tweet_Service.timeline(session[:user_id])
-	#user_id =1001
-	#cached_users = JSON.parse($redis.get("cached-users"))
-	#puts "cached users:#{cached_users}"
-	#if $redis.exists(user_id)
-	#	tweets = JSON.parse($redis.get(user_id))
-	#	puts "There are totally #{tweets.length} tweets"
-	#else	
-	#	tweets=Tweet_Service.timeline(1001)
-	#	cached_users.push (user_id)
-	#	$redis.set("cached-users",cached_users)
-	#	$redis.set(user_id, JSON.generate(tweets))
-	#	puts "There are totally #{tweets.length} tweets"
-	#end
-	tweets=Tweet_Service.timeline(1001)
+	tweets=Tweet_Service.timeline(session[:user_id])
+	user_id =1001
+	cached_users = JSON.parse($redis.get("cached-users"))
+	puts "cached users:#{cached_users}"
+	if $redis.exists(user_id)
+		tweets = JSON.parse($redis.get(user_id))
+		puts "There are totally #{tweets.length} tweets"
+	else	
+		tweets=Tweet_Service.timeline(1001)
+		cached_users.push (user_id)
+		$redis.set("cached-users",cached_users)
+		$redis.set(user_id, JSON.generate(tweets))
+		puts "There are totally #{tweets.length} tweets"
+	end
 	@user_id_array,@user_name_array,@created_time_array,@text_array=Tweet_Service.create_Tweets_attribute_arrays(tweets)
 	erb :test_profile
 
