@@ -19,10 +19,10 @@ configure do
     require 'redis'
     uri = URI.parse("redis://rediscloud:Tm4jpeBjkvIAO2Yp@pub-redis-16637.us-east-1-2.3.ec2.garantiadata.com:16637")
     $redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+    $redis.flushall
     tweets = Tweet_Service.getRecentTweets()
-    @user_id_array,@user_name_array,@created_time_array,@text_array = Tweet_Service.create_Tweets_attribute_arrays(tweets)
-    redis_pack={ids:@user_id_array,names:@user_name_array,times:@created_time_array,texts:@text_array}.to_json
-    $redis.set("100-tweets",redis_pack)
+    $redis.set("cached-users",JSON.generate([]))
+    $redis.set("100-tweets",JSON.generate(tweets))
 end
 
 #after { ActiveRecord::Base.connection.close }
@@ -44,17 +44,9 @@ get '/' do   #Refactoring Done
 	if session[:log_status]==true
 		redirect '/loggedin_root'
 	else 
-		#tweets = Tweet_Service.getRecentTweets()#tweets now are array!!	
-		#@user_id_array,@user_name_array,@created_time_array,@text_array= Tweet_Service.create_Tweets_attribute_arrays(tweets)
-		#@user_id_array = JSON.parse($redis.get("ids"))
-		#@user_name_array = JSON.parse($redis.get("names"))
-		#@created_time_array = JSON.parse($redis.get("times"))
-		#@text_array = JSON.parse($redis.get("texts"))
-		redis_pack= JSON.parse($redis.get("100-tweets"))
-		@user_id_array=redis_pack["ids"]
-		@user_name_array=redis_pack["names"]
-		@created_time_array=redis_pack["times"]
-		@text_array=redis_pack["texts"]
+		#tweets = Tweet_Service.getRecentTweets()#tweets now are array!!
+		tweets=JSON.parse($redis.get("100-tweets"))	
+		@user_id_array,@user_name_array,@created_time_array,@text_array= Tweet_Service.create_Tweets_attribute_arrays(tweets)
 		erb :welcome
 	end
 end
@@ -89,11 +81,15 @@ end
 get '/loggedin_root' do
 	user_id = session[:user_id]
 	cached_users = JSON.parse($redis.get("cached-users"))
-	if cached_users.include?(user_id)
+	puts "cached users:#{cached_users}"
+	if $redis.exists(user_id)
 		puts "here"
-		tweets = JSON.parse($redis.get(user_id))
+		tweets = JSON.parse($redis.get(user_id))	
 	else
+		puts "not cached"
 		tweets=Tweet_Service.timeline(session[:user_id])
+		cached_users.push (user_id)
+		$redis.set("cached-users",cached_users)
 		$redis.set(user_id, JSON.generate(tweets))
 	end
 	@user_id_array,@user_name_array,@created_time_array,@text_array=Tweet_Service.create_Tweets_attribute_arrays(tweets)

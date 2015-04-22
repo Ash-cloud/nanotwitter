@@ -69,56 +69,42 @@ class Tweet_Service
 
 
 
+	#problem here:length will never expand even is under 100
 
 	def self.update_redis_for_timeline(tweet,user_id)
-		f_list=Follow_Service.followers(user_id).to_a
+		followers=Follow_Service.get_followers(user_id)
+		f_list=[]
+		followers.each do |follower|
+			f_list.push follower.follower
+		end
 		c_list=JSON.parse($redis.get("cached-users"))
 		public_part=f_list&c_list
-		public_part.each do user_id
-			timeline=JSON.parse($redis.get(user_id))
-			new_tweet=[tweet.user_id,User.find_by(id: user_id).user_name,tweet.content,create_time_interval(@tweet.created_at)]
-			timeline=timeline.unshift(new_tweet)
-			timeline.pop
-			$redis.set(user_id,timeline)
+		public_part.each do  |user|
+			puts "updating cache for user_id:#{user}"
+			timeline=JSON.parse($redis.get(user))
+			timeline=timeline.unshift(tweet)
+			if timeline.length>100
+				timeline.pop
+			end
+			$redis.set(user,JSON.generate(timeline))
 		end
 	end
 
+	def self.update_redis_for_recent_tweet(tweet)
+		recent_tweets = JSON.parse($redis.get("100-tweets"))
+		recent_tweets=recent_tweets.unshift(tweet)
+		recent_tweets.pop
+		$redis.set("100-tweets",JSON.generate(recent_tweets))
+	end
+
 	def self.post_tweet(tweet_content,user_id)
+		puts "user_id is:#{user_id}"
 		@tweet = Tweet.create(text: tweet_content,user_id: user_id)
-		
-		#need to update redis when a new tweet is created
-		redis_pack = JSON.parse($redis.get("100-tweets"))
-		new_id_array = [user_id]
-		#prev_id_array = JSON.parse($redis.get("ids"))
-		prev_id_array = redis_pack["ids"]
-		new_id_array = new_id_array + prev_id_array[0..98] #add most recent 99 tweet ids with newest tweet id at front
-		#$redis.set("ids",JSON.generate(new_id_array)) #now put newest most recent 100 tweet ids into redis
-		redis_pack["ids"] = new_id_array
-		
-		new_text_array = [tweet_content]
-		#prev_text_array = JSON.parse($redis.get("texts"))
-		prev_text_array = redis_pack["texts"]
-		new_text_array = new_text_array + prev_text_array[0..98]
-		#$redis.set("texts",JSON.generate(new_text_array))
-		redis_pack["texts"] = new_text_array
-		
-		new_name_array = [User.find_by(id: user_id).user_name]
-		#prev_name_array = JSON.parse($redis.get("names"))
-		prev_name_array = redis_pack["names"]
-		new_name_array = new_name_array + prev_name_array[0..98]
-		#$redis.set("names",JSON.generate(new_name_array))
-		redis_pack["names"] = new_name_array
-		
-
-		new_time_array = [create_time_interval(@tweet.created_at)]
-
-		#prev_time_array = JSON.parse($redis.get("times"))
-		prev_time_array = redis_pack["times"]
-		new_time_array = new_time_array + prev_time_array[0..98]
-		#$redis.set("times",JSON.generate(new_time_array))
-		redis_pack["times"] = new_time_array
-		
-		$redis.set("100-tweets",JSON.generate(redis_pack))		
+		user_name=User.find_by(id: user_id).user_name
+		new_tweet=[user_id,user_name,tweet_content,@tweet.created_at]
+		puts new_tweet
+		update_redis_for_timeline(new_tweet,user_id)
+		update_redis_for_recent_tweet(new_tweet)		
 		return @tweet
 	end
 

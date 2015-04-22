@@ -14,11 +14,17 @@ class Follow_Service
 
 	def self.follow(follower_id, followee_id)
 		Follow.create(user_id: followee_id, follower: follower_id)
+		if $redis.exists(follower_id)
+			$redis.del(follower_id)
+		end
 	end
 
 	def self.unfollow(follower_id, followee_id)
 		follow = Follow.find_by(user_id: followee_id, follower: follower_id)
 		Follow.delete(follow)
+		if $redis.exists(follower_id)
+			$redis.del(follower_id)
+		end
 	end
 
 	def self.get_followers(user_id)
