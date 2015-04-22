@@ -229,8 +229,7 @@ get '/test_profile' do
 		$redis.set(user_id, JSON.generate(tweets))
 		puts "There are totally #{tweets.length} tweets"
 	end
-
-	tweets=Tweet_Service.timeline(1001)
+	#tweets=Tweet_Service.timeline(1001)
 	@user_id_array,@user_name_array,@created_time_array,@text_array=Tweet_Service.create_Tweets_attribute_arrays(tweets)
 	erb :test_profile
 
