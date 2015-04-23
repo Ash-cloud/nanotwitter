@@ -1,6 +1,17 @@
 Nano Twitter V0.1 Modification Log
+
+-Basic DB design
+
+-Environment setup
+
 Nano Twitter V0.2 Modification Log
+
+- Sinatra basic version
+
 Nano Twitter V0.3 Modification Log
+
+- Function completed
+
 Nano Twitter V0.4 Modification Log
 
 - Modified the database 
@@ -52,3 +63,41 @@ Nano Twitter V0.4 Modification Log
 -Moved profile button to navigator in my page
 
 -Abandon the TweetUser table
+
+
+
+Nano Twitter V0.5 Modification Log
+
+-Array of 100 most recent tweets stored in Redis in JSON
+
+-When a new tweet is made, the array is taken out of Redis, updated, and put back in Redis as JSON
+-Implemented Redis for Logged in Root timelines 
+	- add to Redis after first get. When user goes to Logged in root, the redis is checked to see if their timeline is being stored there.  
+	- If so, get the timeline out of redis and avoid database calls
+	- If the timeline is not in redis, get it from the database and put it into redis When a tweet is posted, go through the tweeter’s followers and get their timelines out of redis, update them with the new tweet, and put them back in redis.  
+	- If a follower’s timeline is not in redis, get their timeline using database calls and put it into redis.
+
+- Implemented Bootstrap for all pages
+
+- Improved visuals for nanotwitter
+
+- Profile pictures generated each time a profile page is called
+- Tweets appear in boxes with name and time
+
+
+
+
+
+
+
+Future Implementations
+
+Enable Search function in navigation bar.
+Enable Who you Follow, Who follows you features on loggedin root page
+More experiments with Redis with larger Redis Cloud
+Allow for Password Updates
+Increase Password strength
+Allow Users to load profile image
+Implement Mentions and Hashtag features
+Filter Follow Recommendations to users not followed
+
