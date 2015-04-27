@@ -240,4 +240,7 @@ get '/reset' do
     $redis.flushall
     Tweet.delete_all(user_id: 1001)
     Follow.delete_all(follower: 1001)
+    tweets = Tweet_Service.getRecentTweets()
+    $redis.set("cached-users",JSON.generate([]))
+    $redis.set("100-tweets",JSON.generate(tweets))
 end
