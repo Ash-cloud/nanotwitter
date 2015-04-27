@@ -237,6 +237,7 @@ get '/test_profile' do
 end
 
 get '/reset' do
+    $redis.flushall
     Tweet.delete_all(user_id: 1001)
     Follow.delete_all(follower: 1001)
 end
