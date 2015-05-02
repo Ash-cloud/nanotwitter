@@ -215,7 +215,7 @@ get '/test_follow' do
 	
 end
 
-get '/test_profile' do
+get '/test_user' do
 	tweets=Tweet_Service.timeline(session[:user_id])
 	user_id =1001
 	cached_users = JSON.parse($redis.get("cached-users"))
@@ -236,7 +236,7 @@ get '/test_profile' do
 
 end
 
-get '/reset' do
+get '/test_reset' do
     $redis.flushall
     Tweet.delete_all(user_id: 1001)
     Follow.delete_all(follower: 1001)
