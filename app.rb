@@ -15,15 +15,15 @@ configure :production do
   require 'newrelic_rpm'
 end
 #configuring redis cloud
-configure do
-    require 'redis'
-    uri = URI.parse("redis://rediscloud:Tm4jpeBjkvIAO2Yp@pub-redis-16637.us-east-1-2.3.ec2.garantiadata.com:16637")
-    $redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
-    $redis.flushall
-    tweets = Tweet_Service.getRecentTweets()
-    $redis.set("cached-users",JSON.generate([]))
-    $redis.set("100-tweets",JSON.generate(tweets))
-end
+#configure do
+#    require 'redis'
+#    uri = URI.parse("redis://rediscloud:Tm4jpeBjkvIAO2Yp@pub-redis-16637.us-east-1-2.3.ec2.garantiadata.com:16637")
+#    $redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+#    $redis.flushall
+#    tweets = Tweet_Service.getRecentTweets()
+#    $redis.set("cached-users",JSON.generate([]))
+#    $redis.set("100-tweets",JSON.generate(tweets))
+#end
 
 #after { ActiveRecord::Base.connection.close }
 #loadio code for TA
